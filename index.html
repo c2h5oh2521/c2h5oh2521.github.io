@@ -233,7 +233,7 @@
         <div class="terminal-tabs">
             <button class="tab-btn active" onclick="switchTab('tab-links')">01. INDEX</button>
             <button class="tab-btn" onclick="switchTab('tab-intro')">02. DOSSIER</button>
-            <button class="tab-btn" onclick="switchTab('tab-pairing')">03. COGNITIVE</button>
+            <button class="tab-btn" onclick="switchTab('tab-pairing')">03. CONNECTIONS</button>
             <button class="tab-btn" onclick="switchTab('tab-ask')">04. TRANSMIT</button>
         </div>
 
@@ -261,7 +261,37 @@
                     <div class="profile-dossier">
                         <div class="dossier-row"><span class="dossier-label">[NAME]</span><span>치미@ch25oh2521</span></div>
                         <div class="dossier-row"><span class="dossier-label">[DATE]</span><span>2001.08.XX</span></div>
-                        <div class="dossier-row"><span class="dossier-label">[STATUS]</span><span>LAZINESS</span></div>
+                        <div class="dossier-row">
+    <span class="dossier-label">[STATUS]</span><span class="rainbow-glow-text">끝내주게 아무것도 안하고 있음 <span class="blink">_</span></span>
+</div>
+
+<style>
+    /* 무지개빛 그라데이션 텍스트 설정 */
+    .rainbow-glow-text {
+        font-weight: bold;
+        /* 무지개색 그라데이션 배경 정의 */
+        background: linear-gradient(to right, #ff3333, #ff9933, #ffff33, #33ff33, #3333ff, #cc33ff, #ff3333);
+        background-size: 400% 100%; /* 애니메이션 효과를 위한 배경 크기 확장 */
+        -webkit-background-clip: text; /* 그라데이션을 텍스트 영역에만 적용 */
+        -webkit-text-fill-color: transparent; /* 기존 글자색을 투명하게 처리 */
+        color: transparent; /* 파이어폭스 등 다른 브라우저 대응 */
+        
+        /* 빛나는 효과 (Neon Glow) */
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 
+                     0 0 10px rgba(255, 255, 255, 0.3), 
+                     0 0 15px rgba(255, 51, 51, 0.2);
+        
+        /* 무지개 그라데이션이 흐르는 애니메이션 */
+        animation: rainbow_flow 3s linear infinite;
+        display: inline-block; /* 애니메이션 효과가 잘 적용되도록 설정 */
+    }
+
+    /* 무지개 그라데이션 애니메이션 키프레임 */
+    @keyframes rainbow_flow {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 100% 50%; }
+    }
+</style>
                     </div>
                 </div>
                 <div class="tag-container">
