@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL_DOSSIER v3.5_MULTIPLE</title>
+    <style>
+        /* 기본 테마 세팅: 블랙 & 화이트 & 전술적 레드 */
+        :root {
+            --bg-color: #0b0b0b;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --point-red: #ff3333;
+            --border-color: #333333;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+            background-size: 100% 3px;
+        }
+
+        .terminal-window {
+            width: 100%;
+            max-width: 550px;
+            border: 1px solid var(--text-main);
+            background-color: #000000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-header {
+            background-color: var(--text-main);
+            color: #000000;
+            padding: 6px 12px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-dots { display: flex; gap: 6px; }
+        .dot { width: 8px; height: 8px; background-color: #000000; border-radius: 50%; }
+        .dot.red { background-color: var(--point-red); }
+
+        .system-status {
+            padding: 15px 20px 5px 20px;
+            font-size: 0.8rem;
+            color: var(--point-red);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* 4개 탭 네비게이션 */
+        .terminal-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--text-main);
+            background-color: #111111;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 25%;
+            background: none;
+            border: none;
+            border-right: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 12px 6px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .tab-btn:last-child { border-right: none; }
+        .tab-btn.active {
+            color: var(--point-red);
+            font-weight: bold;
+            background-color: #000000;
+            border-bottom: 1px solid #000000;
+        }
+        .tab-btn:hover:not(.active) { color: var(--text-main); background-color: #151515; }
+
+        .terminal-body {
+            padding: 25px 20px;
+            min-height: 380px;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* [공통] 사진 블록 스타일 */
+        .img-placeholder {
+            border: 1px solid var(--text-main);
+            background-color: #111111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            overflow: hidden;
+            position: relative;
+        }
+        .img-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0; left: 0;
+        }
+
+        /* 1, 2, 4페이지 요소 */
+        .bgm-container { margin-bottom: 20px; border: 1px solid var(--border-color); padding: 10px; background-color: #050505; }
+        .link-list { display: flex; flex-direction: column; gap: 12px; }
+        .link-item { display: block; text-decoration: none; color: var(--text-main); border: 1px solid var(--text-main); padding: 14px 16px; font-size: 0.9rem; transition: all 0.2s; }
+        .link-item::before { content: "[▶] "; color: var(--point-red); }
+        .link-item:hover { background-color: var(--point-red); color: #000000; border-color: var(--point-red); font-weight: bold; }
+        .link-item:hover::before { color: #000000; }
+        .profile-layout { display: flex; gap: 20px; margin-bottom: 20px; align-items: flex-start; }
+        .profile-dossier { flex: 1; font-size: 0.9rem; line-height: 1.6; }
+        .dossier-title { font-size: 1.1rem; color: var(--point-red); border-bottom: 1px dashed var(--text-main); padding-bottom: 8px; margin-bottom: 15px; }
+        .dossier-row { margin-bottom: 8px; }
+        .dossier-label { color: var(--text-muted); display: inline-block; width: 80px; }
+        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .tag-block { border: 1px solid var(--text-muted); background-color: #111; padding: 4px 10px; font-size: 0.8rem; }
+        .tag-block.negative { text-decoration: line-through; color: var(--text-muted); }
+        .note-block { padding-left: 8px; border-left: 2px solid var(--point-red); font-size: 0.9rem; line-height: 1.6; }
+        .ask-iframe-wrapper { width: 100%; height: 450px; border: 1px solid var(--border-color); background-color: #050505; }
+        .ask-iframe-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+        /* [3페이지] 아코디언 스타일 다중 페어링 */
+        .accordion-btn {
+            background-color: #111;
+            color: var(--text-main);
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+            text-align: left;
+            outline: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .accordion-btn:hover { border-color: var(--point-red); }
+        .accordion-btn.active {
+            background-color: var(--point-red);
+            color: #000000;
+            font-weight: bold;
+            border-color: var(--point-red);
+            margin-bottom: 0;
+        }
+        
+        .accordion-content {
+            padding: 20px 15px;
+            display: none;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            margin-bottom: 15px;
+            background-color: #050505;
+        }
+
+        /* 페어링 내부 요소 */
+        .d-day-display {
+            text-align: center; margin-bottom: 20px; font-size: 1.1rem; font-weight: bold;
+            color: var(--point-red); background-color: rgba(255, 51, 51, 0.05);
+            border: 1px dashed var(--point-red); padding: 10px; letter-spacing: 1px;
+        }
+        .pair-photos-container { display: flex; justify-content: center; gap: 30px; margin-bottom: 25px; }
+        .pair-char-block { display: flex; flex-direction: column; align-items: center; }
+        .pair-name { font-size: 0.85rem; margin-top: 8px; font-weight: bold; border-bottom: 1px solid var(--text-muted); padding-bottom: 2px;}
+        
+        .gallery-section { margin-bottom: 25px; }
+        .gallery-caption { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; text-align: right; }
+
+        .comms-section-title { font-size: 0.85rem; color: var(--point-red); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;}
+        .comms-log {
+            display: flex; flex-direction: column; gap: 12px;
+            border: 1px solid var(--border-color); padding: 15px;
+            background-color: #000; height: 180px; overflow-y: auto;
+        }
+        .comms-msg { max-width: 85%; padding: 8px 12px; font-size: 0.85rem; line-height: 1.4; }
+        .comms-msg.recv { align-self: flex-start; background-color: #1a1a1a; border-left: 3px solid var(--text-muted); }
+        .comms-msg.send { align-self: flex-end; background-color: rgba(255, 51, 51, 0.08); border-right: 3px solid var(--point-red); text-align: right; }
+        .msg-sender { display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; }
+
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-window">
+        <div class="terminal-header">
+            <span>COMMAND_CENTER.EXE</span>
+            <div class="header-dots"><div class="dot"></div><div class="dot red"></div></div>
+        </div>
+
+        <div class="system-status">● STATUS: ONLINE // SECURE_MODE <span class="blink">_</span></div>
+
+        <div class="terminal-tabs">
+            <button class="tab-btn active" onclick="switchTab('tab-links')">01. INDEX</button>
+            <button class="tab-btn" onclick="switchTab('tab-intro')">02. DOSSIER</button>
+            <button class="tab-btn" onclick="switchTab('tab-pairing')">03. COGNITIVE</button>
+            <button class="tab-btn" onclick="switchTab('tab-ask')">04. TRANSMIT</button>
+        </div>
+
+        <div class="terminal-body">
+            
+            <div id="tab-links" class="tab-content active">
+                <div class="bgm-container">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">> BGM_SIGNAL_RECEIVING...</div>
+                    <iframe style="border-radius:0px;" src="https://open.spotify.com/track/1a9YW7fATU351ok4zWjU7a?si=g7uVoaFNRtuMWEJ93gXxKA" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>
+                <div class="link-list">
+                    <a href="https://x.com/c2h5oh2521" target="_blank" class="link-item">COMM_CHANNEL: TWITTER / X</a>
+                    <a href="https://open.spotify.com/user/31clcuyqacrgjvmdpp7jp3bnsoca?si=d6VEGLyOQGOprL-12Z1IgA" target="_blank" class="link-item">PLATLIST: SPOTIFY</a>
+                    <a href="https://rofan.ai/user/6610d881-b737-4f41-b3b9-8e2df05fcfce" target="_blank" class="link-item">AI_CHATING: ROFAN_AI</a>
+                    <a href="https://125212.tistory.com" target="_blank" class="link-item">LOG_BACKUP: TISTORY</a>
+                </div>
+            </div>
+
+            <div id="tab-intro" class="tab-content">
+                <div class="dossier-title">> OPERATIVE PROFILE</div>
+                <div class="profile-layout">
+                    <div class="img-placeholder" style="width: 105px; height: 135px; flex-shrink: 0;">
+                        <img src="Chimi_profile.png">
+                    </div>
+                    <div class="profile-dossier">
+                        <div class="dossier-row"><span class="dossier-label">[NAME]</span><span>치미@ch25oh2521</span></div>
+                        <div class="dossier-row"><span class="dossier-label">[DATE]</span><span>2001.08.XX</span></div>
+                        <div class="dossier-row"><span class="dossier-label">[STATUS]</span><span>LAZINESS</span></div>
+                    </div>
+                </div>
+                <div class="tag-container">
+                    <div class="tag-block">[ HL ]</div>
+                    <div class="tag-block">[ 군인 ]</div>
+                    <div class="tag-block">[ 용병 ]</div>
+                    <div class="tag-block">[ 아저씨 ]</div>
+                    <div class="tag-block negative">[ BL ONLY ]</div>
+                </div>
+                <div class="note-block">
+                    로판 AI 제작 및 소비.<br>
+                    30대보고 아저씨라 하면 화냅니다.<br>
+                    SNS 팔로잉, 구독, 질문, 잡담 등 자유롭게.
+                </div>
+            </div>
+
+            <div id="tab-pairing" class="tab-content">
+                
+                <button class="accordion-btn" onclick="toggleAccordion(this)">
+                    <span>[+] FILE_01: DAVID x SABLE</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="d-day-display" data-date="2025-04-18">OP_DURATION: <span class="dday-result">LOADING...</span></div>
+                    
+                    <div class="pair-photos-container">
+                        <div class="pair-char-block">
+                            <div class="img-placeholder" style="width: 90px; height: 110px;"><img src="David.png"></div>
+                            <div class="pair-name">DAVID_RILEY</div>
+                        </div>
+                        <div class="pair-char-block">
+                            <div class="img-placeholder" style="width: 90px; height: 110px;"><img src="Sable.png"></div>
+                            <div class="pair-name">SABLE_TRASK</div>
+                        </div>
+                    </div>
+
+                    <div class="gallery-section">
+                        <div class="img-placeholder" style="width: 100%; height: 180px;"><img src="beencomi_riley2.png"></div>
+                        <div class="gallery-caption">COMMISSION: 콩밥</div>
+                    </div>
+                    <div class="gallery-section">
+                        <div class="img-placeholder" style="width: 100%; height: 180px;"><img src="DOG_TAG.jpg"></div>
+                        <div class="gallery-caption">MADE BY: 너도밤나무</div>
+                    </div>
+
+                    <div class="comms-section-title">> INTERCEPTED COMMS LOG</div>
+                    <div class="comms-log">
+                        <div class="comms-msg recv"><span class="msg-sender">D</span>Where's the remote.</div>
+                        <div class="comms-msg send"><span class="msg-sender">S</span>Where you left it?</div>
+                        <div class="comms-msg recv"><span class="msg-sender">D</span>If I knew where I left it, I wouldn't be asking, Savvy.</div>
+                        <div class="comms-msg send"><span class="msg-sender">S</span>Check under the couch cushions. The left one.</div>
+                        <div class="comms-msg recv"><span class="msg-sender">D</span>Not here.</div>
+                        <div class="comms-msg send"><span class="msg-sender">S</span>Okay, then check the pocket of the jeans I wore yesterday. They're on the floor in the laundry room.</div>
+                        <div class="comms-msg recv"><span class="msg-sender">D</span>Why the hell would it be there?</div>
+                        <div class="comms-msg send"><span class="msg-sender">S</span>...just check.</div>
+                        <div class="comms-msg recv"><span class="msg-sender">D</span>Found it. We need to talk.</div>
+                    </div>
+                </div>
+                <button class="accordion-btn" onclick="toggleAccordion(this)">
+                    <span>[+] FILE_02: DYLAN x ROWAN</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="d-day-display" data-date="2025-04-22">OP_DURATION: <span class="dday-result">LOADING...</span></div>
+                    
+                    <div class="pair-photos-container">
+                        <div class="pair-char-block">
+                            <div class="img-placeholder" style="width: 90px; height: 110px;">[ ! ]</div>
+                            <div class="pair-name">DYLAN_FREDERICK</div>
+                        </div>
+                        <div class="pair-char-block">
+                            <div class="img-placeholder" style="width: 90px; height: 110px;"><img src="Rowan.png"></div>
+                            <div class="pair-name">ROWAN_DESLAURIERS</div>
+                        </div>
+                    </div>
+
+                    <div class="gallery-section">
+                        <div class="img-placeholder" style="width: 100%; height: 180px;">[ VISUAL_RECORD ]</div>
+                        <div class="gallery-caption">-</div>
+                    </div>
+
+                    <div class="comms-section-title">> INTERCEPTED COMMS LOG</div>
+                    <div class="comms-log">
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>hey</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>dylan</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>dylannnn</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>Sergeant Fredriiiick</div>
+                        <div class="comms-msg recv"><span class="msg-sender">Dylan</span>What.</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>do u know where i put the backup battery for the Kestrel</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>i swear i had it like an hour ago</div>
+                        <div class="comms-msg recv"><span class="msg-sender">Dylan</span>Left cargo pocket. You moved it there after you complained the chest rig was digging into your ribs.</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>...</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>oh</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>wait how do you even know that</div>
+                        <div class="comms-msg recv"><span class="msg-sender">Dylan</span>I watch.</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>😶</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>that's either really helpful or really creepy and i genuinely cannot decide</div>
+                        <div class="comms-msg recv"><span class="msg-sender">Dylan</span>Found it?</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>yeah it was in my left cargo pocket</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>...merci 🙏</div>
+                        <div class="comms-msg recv"><span class="msg-sender">Dylan</span>Don't lose it again.</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>no promises 😬</div>
+                    </div>
+                </div>
+                </div>
+
+            <div id="tab-ask" class="tab-content">
+                <div style="font-size: 0.9rem; color: var(--point-red); margin-bottom: 12px;">> ESTABLISHING ANONYMOUS UPLINK...</div>
+                <div class="ask-iframe-wrapper">
+                    <iframe src="about:blank"></iframe>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 탭 전환 시스템
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // 아코디언 토글 기능 (열고 닫기)
+        function toggleAccordion(btn) {
+            btn.classList.toggle("active");
+            let content = btn.nextElementSibling;
+            let textSpan = btn.querySelector("span");
+            
+            if (content.style.display === "block") {
+                content.style.display = "none";
+                textSpan.innerText = textSpan.innerText.replace("[-]", "[+]");
+            } else {
+                content.style.display = "block";
+                textSpan.innerText = textSpan.innerText.replace("[+]", "[-]");
+            }
+        }
+
+        // 다중 D-Day 계산 기능
+        function calculateDdays() {
+            const displays = document.querySelectorAll('.d-day-display');
+            const today = new Date();
+            
+            displays.forEach(display => {
+                const dateStr = display.getAttribute('data-date'); // HTML에서 날짜 가져오기
+                if(dateStr) {
+                    const targetDate = new Date(dateStr);
+                    const diffTime = today.getTime() - targetDate.getTime();
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    display.querySelector('.dday-result').innerText = "+" + diffDays + " DAYS";
+                }
+            });
+        }
+
+        window.onload = calculateDdays;
+    </script>
+</body>
+</html>
