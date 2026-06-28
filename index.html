@@ -68,7 +68,7 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        /* 4개 탭 네비게이션 */
+        /* 3개 탭 네비게이션 (수정됨) */
         .terminal-tabs {
             display: flex;
             border-bottom: 1px solid var(--text-main);
@@ -78,7 +78,7 @@
 
         .tab-btn {
             flex: 1;
-            min-width: 25%;
+            min-width: 33.33%; /* 4개(25%)에서 3개(33.33%)로 수정 */
             background: none;
             border: none;
             border-right: 1px solid var(--border-color);
@@ -128,7 +128,7 @@
             top: 0; left: 0;
         }
 
-        /* 1, 2, 4페이지 요소 */
+        /* 1, 2페이지 요소 */
         .bgm-container { margin-bottom: 20px; border: 1px solid var(--border-color); padding: 10px; background-color: #050505; }
         .link-list { display: flex; flex-direction: column; gap: 12px; }
         .link-item { display: block; text-decoration: none; color: var(--text-main); border: 1px solid var(--text-main); padding: 14px 16px; font-size: 0.9rem; transition: all 0.2s; }
@@ -142,20 +142,37 @@
         .dossier-label { color: var(--text-muted); display: inline-block; width: 80px; }
         .tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
         .tag-block { 
-    border: 1px solid var(--text-muted); 
-    background-color: #111; 
-    padding: 6px 10px; 
-    font-size: 0.8rem; 
-    /* 👇 추가된 중앙 정렬 코드 */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-}
+            border: 1px solid var(--text-muted); 
+            background-color: #111; 
+            padding: 6px 10px; 
+            font-size: 0.8rem; 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
         .tag-block.negative { text-decoration: line-through; color: var(--text-muted); }
         .note-block { padding-left: 8px; border-left: 2px solid var(--point-red); font-size: 0.9rem; line-height: 1.6; }
-        .ask-iframe-wrapper { width: 100%; height: 450px; border: 1px solid var(--border-color); background-color: #050505; }
-        .ask-iframe-wrapper iframe { width: 100%; height: 100%; border: none; }
+        
+        /* 추가된 SNS 버튼 스타일 */
+        .sns-container { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
+        .sns-btn {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            background-color: #050505;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        .sns-btn:hover {
+            background-color: var(--point-red);
+            color: #000000;
+            border-color: var(--point-red);
+            font-weight: bold;
+        }
 
         /* [3페이지] 아코디언 스타일 다중 페어링 */
         .accordion-btn {
@@ -218,6 +235,25 @@
 
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
+
+        /* 무지개빛 그라데이션 텍스트 설정 */
+        .rainbow-glow-text {
+            font-weight: bold;
+            background: linear-gradient(to right, #ff3333, #ff9933, #ffff33, #33ff33, #3333ff, #cc33ff, #ff3333);
+            background-size: 400% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 
+                         0 0 10px rgba(255, 255, 255, 0.3), 
+                         0 0 15px rgba(255, 51, 51, 0.2);
+            animation: rainbow_flow 3s linear infinite;
+            display: inline-block;
+        }
+        @keyframes rainbow_flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
     </style>
 </head>
 <body>
@@ -234,7 +270,7 @@
             <button class="tab-btn active" onclick="switchTab('tab-links')">01. INDEX</button>
             <button class="tab-btn" onclick="switchTab('tab-intro')">02. DOSSIER</button>
             <button class="tab-btn" onclick="switchTab('tab-pairing')">03. SYNC</button>
-            <button class="tab-btn" onclick="switchTab('tab-ask')">04. TRANSMIT</button>
+            <!-- 04. TRANSMIT 탭 삭제됨 -->
         </div>
 
         <div class="terminal-body">
@@ -244,11 +280,11 @@
                     <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">> BGM_SIGNAL_RECEIVING...</div>
                     <iframe width="100%" height="150" src="https://www.youtube.com/embed/i_-pZiZJ7MQ?si=N6Gy6jG_qqhmukh0" title="BGM PLAYER" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border: 1px solid var(--border-color); filter: grayscale(150%) contrast(120%);"></iframe>
                 </div>
+                <!-- AI 채팅 플랫폼 링크 3개로 축소 및 변경 -->
                 <div class="link-list">
-                    <a href="https://x.com/c2h5oh2521" target="_blank" class="link-item">COMM_CHANNEL: TWITTER / X</a>
-                    <a href="https://open.spotify.com/user/31clcuyqacrgjvmdpp7jp3bnsoca" target="_blank" class="link-item">PLATLIST: SPOTIFY</a>
-                    <a href="https://rofan.ai/user/6610d881-b737-4f41-b3b9-8e2df05fcfce" target="_blank" class="link-item">AI_CHATING: ROFAN_AI</a>
-                    <a href="https://125212.tistory.com" target="_blank" class="link-item">LOG_BACKUP: TISTORY</a>
+                    <a href="https://rofan.ai/user/6610d881-b737-4f41-b3b9-8e2df05fcfce" target="_blank" class="link-item">AI_CHAT: ROFAN_AI</a>
+                    <a href="https://elyn.ai/community-profile/c2h5oh2521" target="_blank" class="link-item">AI_CHAT: ELYN_AI</a>
+                    <a href="https://caveduck.io/user/c2h5oh2521" target="_blank" class="link-item">AI_CHAT: CAVEDUCK</a>
                 </div>
             </div>
 
@@ -262,36 +298,8 @@
                         <div class="dossier-row"><span class="dossier-label">[NAME]</span><span>치미@ch25oh2521</span></div>
                         <div class="dossier-row"><span class="dossier-label">[DATE]</span><span>2001.08.XX</span></div>
                         <div class="dossier-row">
-    <span class="dossier-label">[STATUS]</span><span class="rainbow-glow-text">끝내주게 숨 쉬는 중 <span class="blink">_</span></span>
-</div>
-
-<style>
-    /* 무지개빛 그라데이션 텍스트 설정 */
-    .rainbow-glow-text {
-        font-weight: bold;
-        /* 무지개색 그라데이션 배경 정의 */
-        background: linear-gradient(to right, #ff3333, #ff9933, #ffff33, #33ff33, #3333ff, #cc33ff, #ff3333);
-        background-size: 400% 100%; /* 애니메이션 효과를 위한 배경 크기 확장 */
-        -webkit-background-clip: text; /* 그라데이션을 텍스트 영역에만 적용 */
-        -webkit-text-fill-color: transparent; /* 기존 글자색을 투명하게 처리 */
-        color: transparent; /* 파이어폭스 등 다른 브라우저 대응 */
-        
-        /* 빛나는 효과 (Neon Glow) */
-        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 
-                     0 0 10px rgba(255, 255, 255, 0.3), 
-                     0 0 15px rgba(255, 51, 51, 0.2);
-        
-        /* 무지개 그라데이션이 흐르는 애니메이션 */
-        animation: rainbow_flow 3s linear infinite;
-        display: inline-block; /* 애니메이션 효과가 잘 적용되도록 설정 */
-    }
-
-    /* 무지개 그라데이션 애니메이션 키프레임 */
-    @keyframes rainbow_flow {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 100% 50%; }
-    }
-</style>
+                            <span class="dossier-label">[STATUS]</span><span class="rainbow-glow-text">끝내주게 숨 쉬는 중 <span class="blink">_</span></span>
+                        </div>
                     </div>
                 </div>
                 <div class="tag-container">
@@ -306,10 +314,15 @@
                     30대보고 아저씨라 하면 화냅니다.<br>
                     SNS 팔로잉, 구독, 질문, 잡담 등 자유롭게.
                 </div>
+                <!-- 작은 버튼 형태의 개인 SNS 링크 추가 -->
+                <div class="sns-container">
+                    <a href="https://x.com/c2h5oh2521" target="_blank" class="sns-btn">[X/TWITTER]</a>
+                    <a href="https://open.spotify.com/user/31clcuyqacrgjvmdpp7jp3bnsoca" target="_blank" class="sns-btn">[SPOTIFY]</a>
+                    <a href="https://125212.tistory.com" target="_blank" class="sns-btn">[TISTORY]</a>
+                </div>
             </div>
 
             <div id="tab-pairing" class="tab-content">
-                
                 <button class="accordion-btn" onclick="toggleAccordion(this)">
                     <span>[+] FILE_01: DAVID x SABLE</span>
                 </button>
@@ -349,6 +362,7 @@
                         <div class="comms-msg recv"><span class="msg-sender">D</span>Found it. We need to talk.</div>
                     </div>
                 </div>
+
                 <button class="accordion-btn" onclick="toggleAccordion(this)">
                     <span>[+] FILE_02: DYLAN x ROWAN</span>
                 </button>
@@ -394,25 +408,8 @@
                         <div class="comms-msg send"><span class="msg-sender">Rowan</span>no promises 😬</div>
                     </div>
                 </div>
-                </div>
-
-            <div id="tab-ask" class="tab-content">
-                <div style="font-size: 0.9rem; color: var(--point-red); margin-bottom: 30px;">> INITIATING SECURE COMMS PROTOCOL...</div>
-                
-                <div style="text-align: center; padding: 40px 0; border: 1px dashed var(--border-color); background-color: rgba(255, 255, 255, 0.02);">
-                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5;">
-                        WARNING: ENCRYPTED CHANNEL.<br>
-                        ANONYMOUS TRANSMISSION ONLY.
-                    </div>
-                    
-                    <a href="https://spin-spin.com/c2h5oh2521" target="_blank" style="display: inline-block; padding: 15px 30px; border: 2px solid var(--point-red); color: var(--point-red); text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: all 0.2s;" onmouseover="this.style.backgroundColor='var(--point-red)'; this.style.color='#000';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--point-red)';">
-                        [ SPIN-SPIN ]
-                    </a>
-                </div>
             </div>
-                </div>
-            </div>
-
+            <!-- 4번 탭 콘텐츠 영역 삭제됨 -->
         </div>
     </div>
 
@@ -446,7 +443,7 @@
             const today = new Date();
             
             displays.forEach(display => {
-                const dateStr = display.getAttribute('data-date'); // HTML에서 날짜 가져오기
+                const dateStr = display.getAttribute('data-date');
                 if(dateStr) {
                     const targetDate = new Date(dateStr);
                     const diffTime = today.getTime() - targetDate.getTime();
