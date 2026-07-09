@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>c2h5oh2521_chimi_cute_desktop_v5</title>
+    <title>c2h5oh2521_chimi_cute_desktop_v6</title>
     <style>
         /* 둥근모꼴 (Neo둥근모) 웹 폰트 로드 */
         @font-face {
@@ -66,13 +66,12 @@
         /* 반응형 레이아웃 - 독립된 기둥(Column) 구조로 틈새 제거 */
         .desktop-columns {
             display: flex;
-            flex-direction: column; /* 모바일 기본: 세로 정렬 */
+            flex-direction: column;
             gap: 25px;
             width: 100%;
             max-width: 950px;
         }
 
-        /* 모바일 모드: 기둥(Wrapper)들을 해제하여 flex-order 가 작동하게 만듦 */
         .col-left, .col-right {
             display: contents; 
         }
@@ -91,7 +90,7 @@
             justify-content: center;
         }
 
-        /* PC 레이아웃 (768px 이상): 왼쪽/오른쪽 기둥을 독립적으로 세워서 빈 공간 없이 밀착 */
+        /* PC 레이아웃 (768px 이상) */
         @media (min-width: 768px) {
             .desktop-columns {
                 flex-direction: row;
@@ -99,14 +98,13 @@
                 justify-content: center;
             }
             .col-left, .col-right {
-                display: flex; /* 기둥 부활 */
+                display: flex;
                 flex-direction: column;
                 gap: 25px;
                 flex: 1;
                 width: 100%;
                 max-width: 450px;
             }
-            /* PC에서는 DOM 순서대로 각 기둥 안에 쌓임 (order 영향 X) */
             .cute-window { order: 0 !important; }
         }
 
@@ -196,26 +194,47 @@
         .btn-sync1 { background-color: var(--cute-green); }
         .btn-sync2 { background-color: #ffb4a2; }
 
-        /* 가로 배너 이미지 창 */
+        /* [수정됨] 가로 배너 이미지 창: 높이 강제 고정 해제 */
         .banner-img-container {
             width: 100%;
-            height: 250px; 
             background-color: var(--cute-red-light);
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
-            position: relative;
+            display: block;
+            border-bottom: 3px dashed var(--cute-red);
         }
-        .banner-img-container img { width: 100%; height: 100%; object-fit: contain; }
+        .banner-img-container img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+        }
 
-        /* 이미지 컨테이너 공통 (object-fit: contain 적용 완료) */
+        /* [수정됨] 프로필/아이콘용 고정 박스: 다시 꽉 차게(cover) 원상 복구 */
         .img-placeholder {
             background-color: var(--cute-red-light);
             border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden; position: relative;
             border: 3px dashed #fff;
+            flex-shrink: 0;
         }
-        .img-placeholder img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
+        .img-placeholder img { 
+            width: 100%; height: 100%; 
+            object-fit: cover; /* 밤티 해결! 꽉 차게 변경 */
+            position: absolute; top: 0; left: 0; 
+        }
+
+        /* [신규] 갤러리용 가변 비율 이미지 클래스 (잘림/빈공간 절대 없음) */
+        .gallery-auto-img {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            border: 3px dashed #fff;
+            display: block;
+            box-sizing: border-box;
+            background-color: var(--cute-red-light);
+        }
+        .green-theme .gallery-auto-img {
+            background-color: var(--cute-green-light);
+        }
 
         /* 프로필 영역 */
         .profile-layout { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
@@ -286,7 +305,7 @@
         }
         .time-display { font-size: 0.75rem; color: var(--text-main); font-weight: bold; flex-shrink: 0; min-width: 35px; text-align: right;}
 
-        /* 링크 & SNS 영역 (통일된 디자인) */
+        /* 링크 & SNS 영역 */
         .section-subtitle { font-size: 0.85rem; color: var(--cute-green); font-weight: bold; margin-bottom: 10px; border-bottom: 2px dashed var(--cute-green-light); padding-bottom: 5px;}
         
         .shortcut-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
@@ -360,7 +379,7 @@
     <!-- 1. 메인 바탕화면 -->
     <div id="view-main" class="view-section active">
         
-        <!-- 상단 가로 배너 -->
+        <!-- [수정됨] 상단 가로 배너: 원본 비율 유지, 잘림/빈공간 없음 -->
         <div class="cute-window wide">
             <div class="window-header">
                 <span>🖼️ MAIN_BANNER.jpg</span>
@@ -373,12 +392,11 @@
             </div>
         </div>
 
-        <!-- 독립된 기둥으로 틈새 없이 달라붙는 데스크톱 레이아웃 -->
         <div class="desktop-columns">
             
-            <!-- 왼쪽 기둥 (PC: 왼쪽 / 모바일: order에 따라 해체되어 정렬) -->
+            <!-- 왼쪽 기둥 -->
             <div class="col-left">
-                <!-- [1] 프로필 (모바일 순서: 2 / PC: 왼쪽 위) -->
+                <!-- 프로필 -->
                 <div class="cute-window win-profile">
                     <div class="window-header">
                         <span>♥ MY_PROFILE.exe</span>
@@ -386,24 +404,26 @@
                     </div>
                     <div class="window-body">
                         <div class="profile-layout">
+                            <!-- 다시 꽉 차는 프로필 박스 -->
                             <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;">
-                                <img src="Chimi_profile.jpg" alt="Profile">
+                                <img src="Chimi_Profile.jpg" alt="Profile">
                             </div>
                             <div class="profile-info">
                                 <div class="info-row"><span class="info-label">NAME</span>치미@ch25oh</div>
                                 <div class="info-row"><span class="info-label">DATE</span>2001.08.XX</div>
-                                <div class="info-row"><span class="info-label">STATE</span><span class="rainbow-glow-text">HP 바닥나는 중<span class="blink">🚨</span></span></div>
+                                <div class="info-row"><span class="info-label">STATE</span><span class="rainbow-glow-text">끝내주게 숨 쉬는 중<span class="blink">★</span></span></div>
                             </div>
                         </div>
                         
                         <div class="note-bubble">
                             AI 채팅 제작 및 소비.<br>
                             30대보고 아저씨라 하면 화냅니다.<br>
+                            네? 여캐 제작자 아니냐고요? 맞긴한데 제 남편도 만들어 먹어야 하지 않겠습니까... (❁´◡`❁)
                         </div>
                     </div>
                 </div>
 
-                <!-- [2] 달력 위젯 (모바일 순서: 4 / PC: 왼쪽 아래) -->
+                <!-- 달력 위젯 -->
                 <div class="cute-window win-calendar">
                     <div class="window-header">
                         <span>📅 CALENDAR.widget</span>
@@ -420,9 +440,9 @@
                 </div>
             </div>
 
-            <!-- 오른쪽 기둥 (PC: 오른쪽 / 모바일: order에 따라 해체되어 정렬) -->
+            <!-- 오른쪽 기둥 -->
             <div class="col-right">
-                <!-- [3] 커스텀 뮤직 플레이어 (모바일 순서: 1 / PC: 오른쪽 위) -->
+                <!-- 커스텀 뮤직 플레이어 -->
                 <div class="cute-window green-theme win-music">
                     <div class="window-header">
                         <span>🎧 AUDIO_PLAYER.exe</span>
@@ -445,7 +465,7 @@
                     </div>
                 </div>
 
-                <!-- [4] 바로가기 폴더 (모바일 순서: 3 / PC: 오른쪽 중간) -->
+                <!-- 바로가기 폴더 -->
                 <div class="cute-window green-theme win-shortcuts">
                     <div class="window-header">
                         <span>♣ SHORTCUTS.folder</span>
@@ -468,7 +488,7 @@
                     </div>
                 </div>
 
-                <!-- [5] 시계 위젯 (모바일 순서: 5 / PC: 오른쪽 아래) -->
+                <!-- 시계 위젯 -->
                 <div class="cute-window win-clock">
                     <div class="window-header">
                         <span>⏰ CLOCK.widget</span>
@@ -499,21 +519,27 @@
                     
                     <div class="pair-photos-container">
                         <div class="pair-char-block">
-                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;"><img src="David.png" alt="David"></div>
+                            <!-- 다시 꽉 차는 프로필 박스 적용 -->
+                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;">
+                                <img src="David.png" alt="David">
+                            </div>
                             <div class="pair-name">DAVID</div>
                         </div>
                         <div class="pair-char-block">
-                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;"><img src="Sable.png" alt="Sable"></div>
+                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;">
+                                <img src="Sable.png" alt="Sable">
+                            </div>
                             <div class="pair-name">SABLE</div>
                         </div>
                     </div>
 
+                    <!-- [수정됨] 갤러리 이미지: 상자 강제 고정을 없애고 auto 비율 클래스로 교체 -->
                     <div class="gallery-section">
-                        <div class="img-placeholder" style="width: 100%; height: 200px;"><img src="beencomi_riley.png" alt="Riley"></div>
+                        <img class="gallery-auto-img" src="beencomi_riley.png" alt="Riley">
                         <div class="gallery-caption">COMMISSION: 콩밥</div>
                     </div>
                     <div class="gallery-section">
-                        <div class="img-placeholder" style="width: 100%; height: 200px;"><img src="DOG_TAG.jpg" alt="Dog Tag"></div>
+                        <img class="gallery-auto-img" src="DOG_TAG.jpg" alt="Dog Tag">
                         <div class="gallery-caption">MADE BY: 너도밤나무</div>
                     </div>
 
@@ -547,17 +573,22 @@
                     
                     <div class="pair-photos-container">
                         <div class="pair-char-block">
-                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;"><img src="Dylan.png" alt="Dylan"></div>
+                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;">
+                                <img src="Dylan.png" alt="Dylan">
+                            </div>
                             <div class="pair-name">DYLAN</div>
                         </div>
                         <div class="pair-char-block">
-                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;"><img src="Rowan.png" alt="Rowan"></div>
+                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;">
+                                <img src="Rowan.png" alt="Rowan">
+                            </div>
                             <div class="pair-name">ROWAN</div>
                         </div>
                     </div>
 
+                    <!-- [수정됨] 갤러리 이미지 -->
                     <div class="gallery-section">
-                        <div class="img-placeholder" style="width: 100%; height: 200px;"><img src="beencomi_choco.png" alt="Choco"></div>
+                        <img class="gallery-auto-img" src="beencomi_choco.png" alt="Choco">
                         <div class="gallery-caption">COMMISSION: 콩밥</div>
                     </div>
 
