@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>c2h5oh2521_chimi_cute_desktop_v3</title>
+    <title>c2h5oh2521_chimi_cute_desktop_v5</title>
     <style>
         /* 둥근모꼴 (Neo둥근모) 웹 폰트 로드 */
         @font-face {
@@ -63,22 +63,27 @@
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* 데스크톱(팝업창 컨테이너) 영역 - 2단 분리를 위한 컬럼 구조 */
+        /* 반응형 레이아웃 - 독립된 기둥(Column) 구조로 틈새 제거 */
         .desktop-columns {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column; /* 모바일 기본: 세로 정렬 */
             gap: 25px;
             width: 100%;
             max-width: 950px;
-            justify-content: center;
         }
-        .col {
-            flex: 1 1 350px;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            max-width: 450px;
+
+        /* 모바일 모드: 기둥(Wrapper)들을 해제하여 flex-order 가 작동하게 만듦 */
+        .col-left, .col-right {
+            display: contents; 
         }
+
+        /* 모바일 화면 노출 순서 지정 */
+        .win-music { order: 1; }
+        .win-profile { order: 2; }
+        .win-shortcuts { order: 3; }
+        .win-calendar { order: 4; }
+        .win-clock { order: 5; }
+
         .desktop-area-sync {
             width: 100%;
             max-width: 700px;
@@ -86,13 +91,33 @@
             justify-content: center;
         }
 
-        /* 개별 팝업창 스타일 */
+        /* PC 레이아웃 (768px 이상): 왼쪽/오른쪽 기둥을 독립적으로 세워서 빈 공간 없이 밀착 */
+        @media (min-width: 768px) {
+            .desktop-columns {
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: center;
+            }
+            .col-left, .col-right {
+                display: flex; /* 기둥 부활 */
+                flex-direction: column;
+                gap: 25px;
+                flex: 1;
+                width: 100%;
+                max-width: 450px;
+            }
+            /* PC에서는 DOM 순서대로 각 기둥 안에 쌓임 (order 영향 X) */
+            .cute-window { order: 0 !important; }
+        }
+
+        /* 개별 팝업창 공통 스타일 */
         .cute-window {
             background-color: var(--window-bg);
             border: 3px solid var(--cute-red);
             border-radius: var(--border-radius);
             box-shadow: 6px 6px 0 var(--cute-red-light);
             width: 100%;
+            margin: 0 auto;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -180,9 +205,9 @@
             overflow: hidden;
             position: relative;
         }
-        .banner-img-container img { width: 100%; height: 100%; object-fit: cover; }
+        .banner-img-container img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* 프로필 영역 */
+        /* 이미지 컨테이너 공통 (object-fit: contain 적용 완료) */
         .img-placeholder {
             background-color: var(--cute-red-light);
             border-radius: 15px;
@@ -190,6 +215,9 @@
             overflow: hidden; position: relative;
             border: 3px dashed #fff;
         }
+        .img-placeholder img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
+
+        /* 프로필 영역 */
         .profile-layout { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
         .profile-info { flex: 1; font-size: 0.95rem; line-height: 1.6; }
         .info-row { margin-bottom: 5px; }
@@ -258,29 +286,34 @@
         }
         .time-display { font-size: 0.75rem; color: var(--text-main); font-weight: bold; flex-shrink: 0; min-width: 35px; text-align: right;}
 
-        /* 링크 & SNS 영역 (크기 통일) */
+        /* 링크 & SNS 영역 (통일된 디자인) */
         .section-subtitle { font-size: 0.85rem; color: var(--cute-green); font-weight: bold; margin-bottom: 10px; border-bottom: 2px dashed var(--cute-green-light); padding-bottom: 5px;}
         
-        .link-list { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 20px; }
-        .link-item { 
-            display: flex; align-items: center; justify-content: center;
-            text-decoration: none; color: var(--text-main); 
-            background: var(--cute-green-light);
-            border-radius: 12px; padding: 12px; font-size: 0.9rem; font-weight: bold;
-            transition: 0.2s; border: 2px dashed var(--cute-green);
-            width: 100%; box-sizing: border-box;
+        .shortcut-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+        
+        .shortcut-btn {
+            background-color: var(--cute-green-light); 
+            color: var(--text-main);
+            border: 2px dashed var(--cute-green);
+            padding: 10px 0; 
+            font-size: 0.8rem; 
+            text-decoration: none; 
+            border-radius: 20px; 
+            transition: 0.2s; 
+            font-weight: bold;
+            text-align: center; 
+            width: 100%; 
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .link-item:hover { background-color: var(--cute-green); color: #fff; border-style: solid; }
-
-        .sns-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .sns-btn {
-            background-color: #fff; color: var(--cute-green);
-            border: 2px solid var(--cute-green);
-            padding: 8px 0; font-size: 0.8rem; text-decoration: none; 
-            border-radius: 20px; transition: 0.2s; font-weight: bold;
-            text-align: center; width: 100%; box-sizing: border-box;
+        .shortcut-btn:hover { 
+            background-color: var(--cute-green); 
+            color: white; 
+            border-style: solid; 
+            transform: scale(1.05); 
         }
-        .sns-btn:hover { background-color: var(--cute-green); color: white; transform: scale(1.05); }
 
         /* 시계 위젯 */
         .clock-wrap { text-align: center; padding: 10px 0; }
@@ -327,7 +360,7 @@
     <!-- 1. 메인 바탕화면 -->
     <div id="view-main" class="view-section active">
         
-        <!-- [1] 상단 가로 배너 -->
+        <!-- 상단 가로 배너 -->
         <div class="cute-window wide">
             <div class="window-header">
                 <span>🖼️ MAIN_BANNER.jpg</span>
@@ -335,18 +368,18 @@
             </div>
             <div class="window-body no-padding">
                 <div class="banner-img-container">
-                    <img src="main_banner.jpg" alt="메인 배너 이미지">
+                    <img src="Chimi_banner.jpg" alt="메인 배너 이미지">
                 </div>
             </div>
         </div>
 
-        <!-- 2단 컬럼 분리 영역 -->
+        <!-- 독립된 기둥으로 틈새 없이 달라붙는 데스크톱 레이아웃 -->
         <div class="desktop-columns">
             
-            <!-- 왼쪽 컬럼 (프로필, 캘린더) -->
-            <div class="col">
-                <!-- 프로필 -->
-                <div class="cute-window">
+            <!-- 왼쪽 기둥 (PC: 왼쪽 / 모바일: order에 따라 해체되어 정렬) -->
+            <div class="col-left">
+                <!-- [1] 프로필 (모바일 순서: 2 / PC: 왼쪽 위) -->
+                <div class="cute-window win-profile">
                     <div class="window-header">
                         <span>♥ MY_PROFILE.exe</span>
                         <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
@@ -359,20 +392,19 @@
                             <div class="profile-info">
                                 <div class="info-row"><span class="info-label">NAME</span>치미@ch25oh</div>
                                 <div class="info-row"><span class="info-label">DATE</span>2001.08.XX</div>
-                                <div class="info-row"><span class="info-label">STATE</span><span class="rainbow-glow-text">끝내주게 숨 쉬는 중<span class="blink">★</span></span></div>
+                                <div class="info-row"><span class="info-label">STATE</span><span class="rainbow-glow-text">HP 바닥나는 중<span class="blink">🚨</span></span></div>
                             </div>
                         </div>
                         
                         <div class="note-bubble">
                             AI 채팅 제작 및 소비.<br>
                             30대보고 아저씨라 하면 화냅니다.<br>
-                            네? 여캐 제작자 아니냐고요? 맞긴한데 제 남편도 만들어 먹어야 하지 않겠습니까... (❁´◡`❁)
                         </div>
                     </div>
                 </div>
 
-                <!-- 캘린더 위젯 -->
-                <div class="cute-window">
+                <!-- [2] 달력 위젯 (모바일 순서: 4 / PC: 왼쪽 아래) -->
+                <div class="cute-window win-calendar">
                     <div class="window-header">
                         <span>📅 CALENDAR.widget</span>
                         <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
@@ -388,10 +420,10 @@
                 </div>
             </div>
 
-            <!-- 오른쪽 컬럼 (뮤직 플레이어, 숏컷, 시계) -->
-            <div class="col">
-                <!-- 커스텀 뮤직 플레이어 -->
-                <div class="cute-window green-theme">
+            <!-- 오른쪽 기둥 (PC: 오른쪽 / 모바일: order에 따라 해체되어 정렬) -->
+            <div class="col-right">
+                <!-- [3] 커스텀 뮤직 플레이어 (모바일 순서: 1 / PC: 오른쪽 위) -->
+                <div class="cute-window green-theme win-music">
                     <div class="window-header">
                         <span>🎧 AUDIO_PLAYER.exe</span>
                         <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
@@ -399,8 +431,7 @@
                     <div class="window-body">
                         <div class="music-player-wrap">
                             <div class="track-title">♫ My_Favorite_Song.mp3</div>
-                            
-                            <!-- [오디오 소스 변경 위치] 여기에 원하는 음악 파일 경로를 넣으세요! -->
+                            <!-- 원하는 음악 파일 경로를 넣어주세요 -->
                             <audio id="custom-audio" src="마치 (MRCH)-05-항복-Oh, Life-192.mp3" loop></audio>
                             
                             <div class="player-controls">
@@ -414,31 +445,31 @@
                     </div>
                 </div>
 
-                <!-- 숏컷 (링크 & SNS) -->
-                <div class="cute-window green-theme">
+                <!-- [4] 바로가기 폴더 (모바일 순서: 3 / PC: 오른쪽 중간) -->
+                <div class="cute-window green-theme win-shortcuts">
                     <div class="window-header">
                         <span>♣ SHORTCUTS.folder</span>
                         <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
                     </div>
                     <div class="window-body">
                         <div class="section-subtitle">🔗 AI CHAT PLATFORMS</div>
-                        <div class="link-list">
-                            <a href="https://elyn.ai/community-profile/c2h5oh2521" target="_blank" class="link-item">ELYN_AI</a>
-                            <a href="https://caveduck.io/user/c2h5oh2521" target="_blank" class="link-item">CAVEDUCK</a>
-                            <a href="https://babechat.ai/creator/83140F08" target="_blank" class="link-item">BABYCHAT</a>
+                        <div class="shortcut-grid">
+                            <a href="https://elyn.ai/community-profile/c2h5oh2521" target="_blank" class="shortcut-btn">ELYN_AI</a>
+                            <a href="https://caveduck.io/user/c2h5oh2521" target="_blank" class="shortcut-btn">CAVEDUCK</a>
+                            <a href="https://babechat.ai/creator/83140F08" target="_blank" class="shortcut-btn">BABYCHAT</a>
                         </div>
 
                         <div class="section-subtitle">💌 SOCIAL LINKS</div>
-                        <div class="sns-container">
-                            <a href="https://x.com/c2h5oh2521" target="_blank" class="sns-btn">X/Twitter</a>
-                            <a href="https://open.spotify.com/user/31clcuyqacrgjvmdpp7jp3bnsoca" target="_blank" class="sns-btn">Spotify</a>
-                            <a href="https://125212.tistory.com" target="_blank" class="sns-btn">Tistory</a>
+                        <div class="shortcut-grid" style="margin-bottom: 0;">
+                            <a href="https://x.com/c2h5oh2521" target="_blank" class="shortcut-btn">X/Twitter</a>
+                            <a href="https://open.spotify.com/user/31clcuyqacrgjvmdpp7jp3bnsoca" target="_blank" class="shortcut-btn">Spotify</a>
+                            <a href="https://125212.tistory.com" target="_blank" class="shortcut-btn">Tistory</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- 시계 위젯 -->
-                <div class="cute-window">
+                <!-- [5] 시계 위젯 (모바일 순서: 5 / PC: 오른쪽 아래) -->
+                <div class="cute-window win-clock">
                     <div class="window-header">
                         <span>⏰ CLOCK.widget</span>
                         <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
@@ -625,7 +656,7 @@
             let ampm = h >= 12 ? 'PM' : 'AM';
             
             h = h % 12;
-            h = h ? h : 12; // 0시를 12시로
+            h = h ? h : 12; 
             m = m < 10 ? '0' + m : m;
             
             document.getElementById('clock-display').innerText = `${h}:${m}`;
@@ -670,7 +701,7 @@
             }
         });
 
-        // 로드 시 함수 전체 실행
+        // 로드 시 전체 함수 실행
         window.onload = () => {
             calculateDdays();
             renderCalendar();
