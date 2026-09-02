@@ -1,583 +1,602 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>c2h5oh2521</title>
-<style>
-  @font-face {
-    font-family: 'JoseonShinmyeongjo';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.1/ChosunSm.woff') format('woff');
-    font-weight: normal;
-    font-display: swap;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>c2h5oh2521_chimidesktop_v2521</title>
+    <style>
+        @font-face {
+            font-family: 'NeoDunggeunmo';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.3/NeoDunggeunmo.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
 
-  :root {
-    --black: #0a0908;
-    --black-2: #0f0d0c;
-    --panel: #100e0d;
-    --ink: #e7e0d6;
-    --ink-dim: #8a8178;
-    --blood: #8b0000;
-    --blood-bright: #c0303a;
-    --blood-dim: #4a1518;
-    --line: #2a2422;
-    --sidebar-w: 300px;
-  }
+        :root {
+            --bg-color: #fffaf5;
+            --text-main: #5c4341;
+            --text-muted: #9c8481;
+            --cute-red: #ff8fa3;
+            --cute-red-light: #ffccd5;
+            --cute-red-shadow: #ff4d6d;
+            --cute-green: #a8e6cf;
+            --cute-green-light: #d4f0e5;
+            --cute-green-shadow: #3edbf0;
+            --window-bg: #ffffff;
+            --border-radius: 20px;
+            --sidebar-width: 280px;
+        }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'NeoDunggeunmo', 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-image: radial-gradient(var(--cute-green-light) 20%, transparent 20%), 
+                              radial-gradient(var(--cute-red-light) 20%, transparent 20%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            overflow-x: hidden;
+        }
 
-  body {
-    background-color: var(--black);
-    color: var(--ink);
-    font-family: 'JoseonShinmyeongjo', 'Batang', serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-  }
+        .hamburger-btn {
+            position: fixed; top: 20px; left: 20px; z-index: 210;
+            width: 50px; height: 50px;
+            background-color: var(--window-bg);
+            border: 3px solid var(--cute-red);
+            border-radius: 15px;
+            box-shadow: 3px 3px 0 var(--cute-red-light);
+            cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+            transition: transform 0.2s;
+        }
+        .hamburger-btn:hover { transform: scale(1.05); }
+        .hamburger-btn span { display: block; width: 22px; height: 3px; background-color: var(--cute-red); border-radius: 3px; transition: 0.3s; }
+        body.sidebar-open .hamburger-btn span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        body.sidebar-open .hamburger-btn span:nth-child(2) { opacity: 0; }
+        body.sidebar-open .hamburger-btn span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
-  #dust { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .sidebar {
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width); height: 100vh;
+            background-color: var(--window-bg);
+            border-right: 3px solid var(--cute-red);
+            box-shadow: 6px 0 0 var(--cute-red-light);
+            z-index: 205;
+            transform: translateX(-105%);
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            display: flex; flex-direction: column;
+            overflow-y: auto; padding-bottom: 30px; box-sizing: border-box;
+        }
+        body.sidebar-open .sidebar { transform: translateX(0); }
 
-  .vignette {
-    position: fixed; inset: 0; z-index: 1; pointer-events: none;
-    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.7) 100%);
-  }
+        .sidebar-header {
+            background-color: var(--cute-red); color: #fff;
+            padding: 22px 20px 18px 70px;
+            font-size: 1rem; font-weight: bold; letter-spacing: 1px;
+            position: sticky; top: 0; z-index: 2;
+        }
+        .sidebar-header small { display: block; font-size: 0.7rem; opacity: 0.85; margin-top: 4px; letter-spacing: 0; }
 
-  .eye-btn {
-    position: fixed; top: 22px; left: 22px; z-index: 60;
-    width: 60px; height: 60px;
-    background: var(--black-2);
-    border: 2px solid var(--blood-bright);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    box-shadow: 3px 3px 0 var(--blood-dim);
-    transition: box-shadow .2s, transform .2s;
-  }
-  .eye-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--blood-dim); }
-  .eye-btn svg { width: 36px; height: 36px; display: block; }
-  .eye-btn:hover .lidT2 { animation-duration: 2s; }
-  .eye-btn:hover .lidB2 { animation-duration: 2s; }
-  .eye-btn:hover .pupil { animation-duration: 2s; }
+        .side-profile {
+            margin: 18px 16px 10px 16px; padding: 16px;
+            border: 3px solid var(--cute-red-light); border-radius: var(--border-radius);
+            text-align: center; background-color: var(--bg-color);
+        }
+        .side-profile-img {
+            width: 80px; height: 80px; border-radius: 50%;
+            border: 3px dashed var(--cute-red); object-fit: cover;
+            background-color: var(--cute-red-light); display: block; margin: 0 auto 10px auto;
+        }
+        .side-profile-name { font-size: 0.95rem; font-weight: bold; color: var(--text-main); }
+        .side-profile-handle { font-size: 0.75rem; color: var(--text-muted); margin-top: 3px; }
+        .side-profile-state { margin-top: 10px; font-size: 0.75rem; font-weight: bold; color: var(--cute-red-shadow); background-color: var(--cute-red-light); border-radius: 12px; padding: 5px 8px; }
 
-  @keyframes lidTop2 { 0%,90%,100%{transform:translateY(-14px)} 95%{transform:translateY(2px)} }
-  @keyframes lidBot2 { 0%,90%,100%{transform:translateY(14px)} 95%{transform:translateY(-2px)} }
-  @keyframes look { 0%,20%{transform:translateX(0)} 35%,45%{transform:translateX(-6px)} 60%,70%{transform:translateX(6px)} 85%,100%{transform:translateX(0)} }
-  .lidT2 { animation: lidTop2 6s infinite; }
-  .lidB2 { animation: lidBot2 6s infinite; }
-  .pupil { animation: look 5s infinite; }
+        .side-nav { padding: 8px 16px; }
+        .cat-title { font-size: 0.75rem; color: var(--cute-green); font-weight: bold; letter-spacing: 1px; margin: 14px 6px 8px 6px; border-bottom: 2px dashed var(--cute-green-light); padding-bottom: 5px; }
 
-  .overlay {
-    position: fixed; inset: 0; z-index: 40;
-    background: rgba(0,0,0,0.6);
-    opacity: 0; pointer-events: none; transition: opacity .3s;
-  }
-  body.nav-open .overlay { opacity: 1; pointer-events: auto; }
+        .cat-folder { margin-bottom: 6px; }
+        .cat-folder > summary {
+            list-style: none; cursor: pointer; padding: 10px 12px;
+            border-radius: 14px; font-size: 0.9rem; font-weight: bold; color: var(--text-main);
+            background-color: var(--cute-red-light); border: 2px dashed var(--cute-red);
+            display: flex; align-items: center; justify-content: space-between; transition: 0.2s;
+        }
+        .cat-folder > summary::-webkit-details-marker { display: none; }
+        .cat-folder > summary:hover { background-color: var(--cute-red); color: #fff; }
+        .cat-folder > summary .arrow { font-size: 0.7rem; transition: transform 0.2s; }
+        .cat-folder[open] > summary .arrow { transform: rotate(90deg); }
+        .cat-folder[open] > summary { border-radius: 14px 14px 0 0; }
+        .cat-items { display: flex; flex-direction: column; gap: 4px; padding: 8px 6px 6px 6px; border: 2px dashed var(--cute-red-light); border-top: none; border-radius: 0 0 14px 14px; }
+        .cat-item {
+            text-align: left; background: none; border: none; font-family: inherit; font-size: 0.85rem;
+            color: var(--text-main); padding: 8px 12px; border-radius: 10px; cursor: pointer; text-decoration: none;
+            transition: 0.15s; display: flex; align-items: center; gap: 6px;
+        }
+        .cat-item:hover { background-color: var(--cute-green-light); color: var(--text-main); padding-left: 16px; }
+        .cat-item.active { background-color: var(--cute-green); color: var(--text-main); font-weight: bold; }
+        .cat-item .count { margin-left: auto; font-size: 0.7rem; color: var(--text-muted); }
 
-  .sidebar {
-    position: fixed; top: 0; left: 0;
-    width: var(--sidebar-w); height: 100vh;
-    background: var(--panel);
-    border-right: 2px solid var(--blood);
-    box-shadow: 6px 0 0 var(--blood-dim);
-    z-index: 50;
-    transform: translateX(-106%);
-    transition: transform .38s cubic-bezier(.2,.7,.3,1);
-    display: flex; flex-direction: column;
-    overflow-y: auto; padding-bottom: 30px;
-  }
-  body.nav-open .sidebar { transform: translateX(0); }
+        .side-sns { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; }
+        .side-sns a {
+            flex: 1 1 40%; text-align: center; font-size: 0.75rem; font-weight: bold; text-decoration: none;
+            color: var(--text-main); background-color: var(--cute-green-light); border: 2px dashed var(--cute-green);
+            border-radius: 12px; padding: 8px 4px; transition: 0.2s;
+        }
+        .side-sns a:hover { background-color: var(--cute-green); color: #fff; }
 
-  .sb-head {
-    padding: 24px 22px 18px 82px;
-    border-bottom: 1px solid var(--line);
-    letter-spacing: 2px; font-size: 1.05rem; color: var(--ink);
-  }
-  .sb-head small { display:block; margin-top:6px; font-size:.7rem; color:var(--ink-dim); letter-spacing:1px; }
+        .overlay {
+            position: fixed; inset: 0; background-color: rgba(92, 67, 65, 0.35); backdrop-filter: blur(2px);
+            z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        body.sidebar-open .overlay { opacity: 1; pointer-events: auto; }
 
-  .sb-profile {
-    margin: 20px 18px; padding: 18px;
-    border: 1px solid var(--line); text-align: center; background: var(--black-2);
-  }
-  .sb-profile img {
-    width: 84px; height: 84px; object-fit: cover; border-radius: 50%;
-    border: 2px solid var(--blood); filter: grayscale(0.4) contrast(1.05);
-  }
-  .sb-name { margin-top: 12px; font-size: 1rem; letter-spacing: 1px; }
-  .sb-handle { margin-top: 4px; font-size: .72rem; color: var(--ink-dim); }
-  .sb-state { margin-top: 12px; font-size: .72rem; color: var(--blood-bright); border: 1px solid var(--blood-dim); padding: 5px; letter-spacing: 1px; }
+        .view-section {
+            display: none; padding: 30px 20px 60px 20px;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-height: calc(100vh - 90px);
+        }
+        .view-section.active { display: flex; flex-direction: column; align-items: center; gap: 25px; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-  .sb-cat { padding: 0 18px; }
-  .cat-label { margin: 18px 4px 8px; font-size: .7rem; letter-spacing: 2px; color: var(--ink-dim); border-bottom: 1px solid var(--line); padding-bottom: 6px; }
-  details.folder { margin-bottom: 6px; }
-  details.folder > summary {
-    list-style: none; cursor: pointer; padding: 11px 12px;
-    border: 1px solid var(--line); background: var(--black-2);
-    font-size: .9rem; letter-spacing: 1px;
-    display: flex; align-items: center; justify-content: space-between;
-    transition: border-color .2s, color .2s;
-  }
-  details.folder > summary::-webkit-details-marker { display: none; }
-  details.folder > summary:hover { border-color: var(--blood); color: var(--blood-bright); }
-  details.folder[open] > summary { border-color: var(--blood); }
-  .folder .arrow { font-size: .65rem; transition: transform .2s; color: var(--blood-bright); }
-  details.folder[open] .arrow { transform: rotate(90deg); }
-  .cat-items { border: 1px solid var(--line); border-top: none; }
-  .cat-item {
-    display: flex; align-items: center; gap: 8px; padding: 10px 14px; font-size: .82rem;
-    color: var(--ink); text-decoration: none; cursor: pointer;
-    border-bottom: 1px solid var(--line); transition: background .15s, padding-left .15s;
-  }
-  .cat-item:last-child { border-bottom: none; }
-  .cat-item:hover { background: var(--blood-dim); padding-left: 20px; }
-  .cat-item.active { background: var(--blood); color: var(--ink); }
-  .cat-item .n { margin-left: auto; font-size: .68rem; color: var(--ink-dim); }
+        .desktop-columns { display: flex; flex-direction: column; gap: 25px; width: 100%; max-width: 950px; }
+        .col-left, .col-right { display: contents; }
 
-  .sb-links { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 0; }
-  .sb-links a {
-    flex: 1 1 44%; text-align: center; font-size: .72rem; letter-spacing: 1px;
-    color: var(--ink); text-decoration: none; border: 1px solid var(--line); padding: 8px 4px;
-    transition: border-color .2s, color .2s;
-  }
-  .sb-links a:hover { border-color: var(--blood); color: var(--blood-bright); }
+        .win-music { order: 1; }
+        .win-profile { order: 2; }
+        .win-shortcuts { order: 3; }
+        .win-calendar { order: 4; }
+        .win-clock { order: 5; }
 
-  .desk { position: relative; z-index: 5; max-width: 1100px; margin: 0 auto; padding: 90px 24px 80px; }
+        .desktop-area-sync { width: 100%; max-width: 700px; display: flex; justify-content: center; }
 
-  .desk-title { text-align: center; margin-bottom: 50px; letter-spacing: 8px; font-size: 1.8rem; color: var(--ink); text-shadow: 0 0 18px rgba(139,0,0,0.5); }
-  .desk-title small { display:block; margin-top:10px; font-size:.7rem; letter-spacing:3px; color:var(--ink-dim); }
+        @media (min-width: 768px) {
+            .desktop-columns { flex-direction: row; align-items: flex-start; justify-content: center; }
+            .col-left, .col-right { display: flex; flex-direction: column; gap: 25px; flex: 1; width: 100%; max-width: 450px; }
+            .cute-window { order: 0 !important; }
+        }
 
-  .win {
-    background: var(--panel); border: 1px solid var(--blood);
-    box-shadow: 6px 6px 0 var(--blood-dim);
-    display: flex; flex-direction: column;
-    transition: transform .25s, box-shadow .25s, border-color .25s;
-  }
-  .win:hover { transform: translate(-3px,-3px); box-shadow: 9px 9px 0 var(--blood-dim); border-color: var(--blood-bright); z-index: 20; }
-  .win-bar { height: 28px; flex: 0 0 auto; background: var(--black-2); border-bottom: 1px solid var(--blood); display: flex; align-items: center; gap: 7px; padding: 0 10px; }
-  .win-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blood-bright); }
-  .win-dot.d2 { background: var(--blood); }
-  .win-dot.d3 { background: var(--blood-dim); }
-  .win-title { margin-left: 6px; font-size: .68rem; letter-spacing: 2px; color: var(--ink-dim); }
-  .win-body { padding: 16px; }
+        .cute-window {
+            background-color: var(--window-bg); border: 3px solid var(--cute-red); border-radius: var(--border-radius);
+            box-shadow: 6px 6px 0 var(--cute-red-light); width: 100%; margin: 0 auto; overflow: hidden;
+            display: flex; flex-direction: column; transition: transform 0.2s;
+        }
+        .cute-window:hover { transform: translateY(-3px); }
+        .cute-window.green-theme { border-color: var(--cute-green); box-shadow: 6px 6px 0 var(--cute-green-light); }
+        .cute-window.wide { max-width: 950px; width: 100%; }
 
-  .win img.photo { width: 100%; display: block; filter: grayscale(0.55) contrast(1.08) brightness(0.92); border: 1px solid var(--line); }
-  .win:hover img.photo { filter: grayscale(0.15) contrast(1.1); }
-  .win .cap { margin-top: 10px; font-size: .78rem; color: var(--ink-dim); letter-spacing: 1px; text-align: center; }
+        .window-header {
+            background-color: var(--cute-red); color: #ffffff; padding: 10px 15px; font-size: 1rem;
+            display: flex; justify-content: space-between; align-items: center; font-weight: bold; letter-spacing: 1px;
+        }
+        .green-theme .window-header { background-color: var(--cute-green); color: var(--text-main); }
+        .header-dots { display: flex; gap: 6px; }
+        .dot { width: 14px; height: 14px; border-radius: 50%; background-color: #fff; opacity: 0.8; }
 
-  .scatter { position: relative; min-height: 900px; }
-  @media (min-width: 860px) {
-    .scatter .win { position: absolute; }
-    .w-profile { width: 300px; top: 0;    left: 20px;  transform: rotate(-2deg); }
-    .w-banner  { width: 430px; top: 20px;  left: 340px; transform: rotate(1.5deg); }
-    .w-note    { width: 300px; top: 250px; left: 20px;  transform: rotate(1deg); }
-    .w-music   { width: 300px; top: 300px; left: 470px; transform: rotate(-1.5deg); }
-    .w-cal     { width: 300px; top: 470px; left: 90px;  transform: rotate(-1deg); }
-    .w-clock   { width: 260px; top: 540px; left: 430px; transform: rotate(2deg); }
-    .scatter .win:hover { transform: rotate(0) translate(-3px,-3px); }
-  }
-  @media (max-width: 859px) {
-    .scatter { display: flex; flex-direction: column; gap: 26px; align-items: center; }
-    .scatter .win { width: 100%; max-width: 380px; transform: none !important; }
-  }
+        .window-body { padding: 20px; background-color: var(--window-bg); }
+        .window-body.no-padding { padding: 0; }
 
-  .win-note .note-text { font-size: .92rem; line-height: 1.9; color: var(--ink); letter-spacing: .5px; }
-  .win-note .note-text .em { color: var(--blood-bright); }
+        .banner-img-container { width: 100%; background-color: var(--cute-red-light); display: block; border-bottom: 3px dashed var(--cute-red); }
+        .banner-img-container img { width: 100%; height: auto; display: block; }
 
-  .clock-face { text-align: center; padding: 6px 0; }
-  .clock-time { font-size: 2.4rem; letter-spacing: 4px; color: var(--ink); text-shadow: 0 0 14px rgba(139,0,0,0.5); }
-  .clock-ampm { font-size: 1rem; color: var(--ink-dim); margin-left: 6px; }
-  .clock-date { margin-top: 8px; font-size: .74rem; letter-spacing: 3px; color: var(--ink-dim); }
+        .img-placeholder {
+            background-color: var(--cute-red-light); border-radius: 15px;
+            display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
+            border: 3px dashed #fff; flex-shrink: 0;
+        }
+        .img-placeholder img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
 
-  /* 달력 */
-  .cal-month { text-align: center; font-size: 1.1rem; letter-spacing: 3px; color: var(--blood-bright); margin-bottom: 14px; }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-size: .78rem; text-align: center; }
-  .cal-grid .dn { color: var(--ink-dim); padding-bottom: 4px; }
-  .cal-grid .dc { padding: 6px 0; color: var(--ink); }
-  .cal-grid .dc.today { background: var(--blood); color: var(--ink); border-radius: 3px; box-shadow: 0 0 0 2px var(--blood-dim); }
-  .cal-grid .dc.sun { color: var(--blood-bright); }
+        .gallery-auto-img { width: 100%; height: auto; border-radius: 15px; border: 3px dashed #fff; display: block; box-sizing: border-box; background-color: var(--cute-red-light); }
+        .green-theme .gallery-auto-img { background-color: var(--cute-green-light); }
 
-  /* 음악 플레이어 */
-  .mp-title { text-align: center; font-size: .82rem; letter-spacing: 1px; color: var(--ink-dim); margin-bottom: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .mp-controls { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); padding: 10px 12px; background: var(--black-2); }
-  .mp-play { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--blood); background: var(--black); color: var(--blood-bright); font-size: .9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; font-family: inherit; }
-  .mp-play:hover { background: var(--blood); color: var(--ink); }
-  .mp-bar { flex: 1; -webkit-appearance: none; appearance: none; height: 5px; background: var(--line); outline: none; border-radius: 3px; overflow: hidden; cursor: pointer; }
-  .mp-bar::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 0; height: 5px; box-shadow: -100vw 0 0 100vw var(--blood); }
-  .mp-time { flex: 0 0 auto; font-size: .68rem; color: var(--ink-dim); min-width: 34px; text-align: right; }
+        .profile-layout { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
+        .profile-info { flex: 1; font-size: 0.95rem; line-height: 1.6; }
+        .info-row { margin-bottom: 5px; }
+        .info-label { color: var(--cute-red); display: inline-block; width: 65px; font-weight: bold; }
 
-  .view { display: none; }
-  .view.active { display: block; animation: fade .4s ease; }
-  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+        .note-bubble { background-color: var(--bg-color); padding: 15px; border-radius: 15px; font-size: 0.9rem; line-height: 1.6; border: 2px solid var(--cute-red-light); position: relative; }
+        .note-bubble::before { content: ''; position: absolute; top: -10px; left: 20px; border-width: 0 10px 10px 10px; border-style: solid; border-color: transparent transparent var(--cute-red-light) transparent; }
 
-  .pair-wrap { max-width: 680px; margin: 0 auto; }
-  .pair-photos { display: flex; justify-content: center; gap: 40px; margin: 24px 0; }
-  .pair-one { text-align: center; }
-  .pair-one img { width: 110px; height: 110px; object-fit: cover; border-radius: 50%; border: 2px solid var(--blood); filter: grayscale(0.5) contrast(1.05); }
-  .pair-one .nm { margin-top: 10px; font-size: .8rem; letter-spacing: 2px; color: var(--ink); border: 1px solid var(--line); padding: 4px 12px; display: inline-block; }
-  .dday { text-align: center; font-size: 1rem; letter-spacing: 2px; color: var(--blood-bright); border: 1px solid var(--blood-dim); padding: 10px; margin-bottom: 6px; }
-  .gallery-img { width: 100%; display: block; margin-top: 16px; border: 1px solid var(--line); filter: grayscale(0.4) contrast(1.05); }
-  .gallery-cap { text-align: center; font-size: .74rem; color: var(--ink-dim); margin-top: 6px; letter-spacing: 1px; }
+        .calendar-wrap { text-align: center; }
+        .month-title { color: var(--cute-red); font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; }
+        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; font-size: 0.9rem; font-weight: bold; }
+        .day-name { color: var(--text-muted); margin-bottom: 5px; }
+        .day-num { padding: 8px 0; border-radius: 50%; background-color: var(--bg-color); display: flex; align-items: center; justify-content: center; }
+        .day-num.today { background-color: var(--cute-red); color: white; box-shadow: 0 0 0 3px var(--cute-red-light); animation: bounce 2s infinite; }
 
-  .comms { margin-top: 24px; }
-  .comms-h { text-align: center; font-size: .78rem; letter-spacing: 2px; color: var(--ink-dim); margin-bottom: 14px; }
-  .comms-log { display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--line); padding: 16px; max-height: 320px; overflow-y: auto; background: var(--black-2); }
-  .msg { max-width: 80%; padding: 9px 13px; font-size: .84rem; line-height: 1.5; letter-spacing: .3px; }
-  .msg.recv { align-self: flex-start; border: 1px solid var(--line); }
-  .msg.send { align-self: flex-end; border: 1px solid var(--blood); background: var(--blood-dim); text-align: right; }
-  .msg .who { display: block; font-size: .66rem; color: var(--ink-dim); margin-bottom: 3px; letter-spacing: 1px; }
+        .music-player-wrap { text-align: center; }
+        .track-title { font-size: 1rem; color: var(--cute-green); font-weight: bold; margin-bottom: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-controls { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--cute-green-light); padding: 10px 15px; border-radius: 20px; border: 2px dashed var(--cute-green); }
+        .play-btn { background-color: var(--cute-green); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1rem; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; }
+        .play-btn:hover { background-color: var(--text-main); transform: scale(1.1); }
+        .progress-bar-container { flex-grow: 1; display: flex; align-items: center; }
+        .progress-bar { width: 100%; -webkit-appearance: none; appearance: none; height: 8px; background: #ffffff; outline: none; border-radius: 5px; border: 2px solid var(--cute-green); overflow: hidden; cursor: pointer; }
+        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 0px; height: 8px; background: var(--cute-green); box-shadow: -100vw 0 0 100vw var(--cute-green); }
+        .time-display { font-size: 0.75rem; color: var(--text-main); font-weight: bold; flex-shrink: 0; min-width: 35px; text-align: right;}
 
-  .blink { animation: bl 1.4s infinite; }
-  @keyframes bl { 50% { opacity: 0; } }
+        .section-subtitle { font-size: 0.85rem; color: var(--cute-green); font-weight: bold; margin-bottom: 10px; border-bottom: 2px dashed var(--cute-green-light); padding-bottom: 5px;}
+        .shortcut-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+        .shortcut-btn { background-color: var(--cute-green-light); color: var(--text-main); border: 2px dashed var(--cute-green); padding: 10px 0; font-size: 0.8rem; text-decoration: none; border-radius: 20px; transition: 0.2s; font-weight: bold; text-align: center; width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
+        .shortcut-btn:hover { background-color: var(--cute-green); color: white; border-style: solid; transform: scale(1.05); }
 
-  ::-webkit-scrollbar { width: 9px; }
-  ::-webkit-scrollbar-track { background: var(--black); }
-  ::-webkit-scrollbar-thumb { background: var(--blood-dim); }
-  ::-webkit-scrollbar-thumb:hover { background: var(--blood); }
+        .clock-wrap { text-align: center; padding: 10px 0; }
+        .clock-time { font-size: 2.5rem; color: var(--cute-red); font-weight: bold; letter-spacing: 2px; text-shadow: 2px 2px 0 var(--cute-red-light); }
+        .clock-ampm { font-size: 1.2rem; color: var(--text-muted); margin-left: 5px; }
 
-  @media (prefers-reduced-motion: reduce) {
-    .lidT2,.lidB2,.pupil,.blink { animation: none; }
-    .win, .eye-btn { transition: none; }
-  }
-</style>
+        .d-day-display { text-align: center; margin-bottom: 20px; font-size: 1.2rem; font-weight: bold; color: var(--cute-red); background-color: var(--cute-red-light); border-radius: 20px; padding: 10px; }
+        .pair-photos-container { display: flex; justify-content: center; gap: 30px; margin-bottom: 25px; }
+        .pair-char-block { display: flex; flex-direction: column; align-items: center; }
+        .pair-name { font-size: 0.9rem; margin-top: 10px; font-weight: bold; background: var(--text-main); color: white; padding: 4px 12px; border-radius: 12px; }
+        .gallery-section { margin-bottom: 20px; }
+        .gallery-caption { font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; text-align: center; font-weight: bold;}
+        .comms-header { text-align: center; color: var(--cute-green); font-weight: bold; margin-bottom: 10px; font-size: 0.9rem;}
+        .comms-log { display: flex; flex-direction: column; gap: 10px; background-color: var(--bg-color); border-radius: 20px; padding: 15px; height: 300px; overflow-y: auto; border: 2px solid var(--cute-green-light); }
+        .comms-msg { max-width: 80%; padding: 10px 14px; font-size: 0.9rem; line-height: 1.4; border-radius: 18px; position: relative;}
+        .comms-msg.recv { align-self: flex-start; background-color: #ffffff; border: 2px solid var(--cute-green-light); border-top-left-radius: 4px; }
+        .comms-msg.send { align-self: flex-end; background-color: var(--cute-red-light); border: 2px solid var(--cute-red); border-top-right-radius: 4px; text-align: right; }
+        .msg-sender { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; font-weight: bold; }
+
+        .rainbow-glow-text { font-weight: bold; color: var(--cute-red); }
+        .blink { animation: blinker 1.5s infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--cute-red-light); border-radius: 10px; }
+        .green-theme ::-webkit-scrollbar-thumb { background: var(--cute-green-light); }
+
+        .main-content { padding-top: 20px; }
+    </style>
 </head>
 <body>
 
-  <canvas id="dust"></canvas>
-  <div class="vignette"></div>
-
-  <div class="eye-btn" id="eyeBtn" role="button" aria-label="open menu" tabindex="0">
-    <svg viewBox="0 0 40 40" aria-hidden="true">
-      <clipPath id="eyeClip"><path d="M4 20 Q20 6 36 20 Q20 34 4 20 Z"/></clipPath>
-      <g clip-path="url(#eyeClip)">
-        <rect x="4" y="6" width="32" height="28" fill="#080808"/>
-        <g class="pupil">
-          <circle cx="20" cy="20" r="8" fill="#c0303a"/>
-          <circle cx="20" cy="20" r="3.5" fill="#0a0a0a"/>
-        </g>
-        <rect class="lidT2" x="2" y="4" width="36" height="14" fill="#100e0d"/>
-        <rect class="lidB2" x="2" y="22" width="36" height="14" fill="#100e0d"/>
-      </g>
-      <path d="M4 20 Q20 6 36 20 Q20 34 4 20 Z" fill="none" stroke="#c0303a" stroke-width="2"/>
-    </svg>
-  </div>
-
-  <div class="overlay" id="overlay"></div>
-
-  <aside class="sidebar" id="sidebar">
-    <div class="sb-head">
-      c2h5oh2521
-      <small>c2h5oh2521.github.io</small>
+    <div class="hamburger-btn" id="hamburger" onclick="toggleSidebar()" role="button" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
     </div>
 
-    <div class="sb-profile">
-      <img src="Chimi_Profile.jpg" alt="profile" onerror="this.style.display='none'"/>
-      <div class="sb-name">치미</div>
-      <div class="sb-handle">@ch25oh2521</div>
-      <div class="sb-state">HP 깎이는 중<span class="blink"> ✦</span></div>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            CHIMI'S DESKTOP
+            <small>c2h5oh2521.github.io</small>
+        </div>
+
+        <div class="side-profile">
+            <img class="side-profile-img" src="Chimi_Profile.jpg" alt="Profile">
+            <div class="side-profile-name">치미</div>
+            <div class="side-profile-handle">@ch25oh2521</div>
+            <div class="side-profile-state">🚨 HP 깎이는 중</div>
+        </div>
+
+        <nav class="side-nav">
+            <div class="cat-title">📁 CATEGORY</div>
+
+            <details class="cat-folder" open>
+                <summary>🏠 DESKTOP <span class="arrow">▶</span></summary>
+                <div class="cat-items">
+                    <a class="cat-item active" href="#" onclick="switchView('view-main', this); return false;">HOME <span class="count">메인</span></a>
+                </div>
+            </details>
+
+            <details class="cat-folder">
+                <summary>💾 FILES <span class="arrow">▶</span></summary>
+                <div class="cat-items">
+                    <a class="cat-item" href="#" onclick="switchView('view-sync1', this); return false;">♥ David x Sable <span class="count">01</span></a>
+                    <a class="cat-item" href="#" onclick="switchView('view-sync2', this); return false;">♣ Dylan x Rowan <span class="count">02</span></a>
+                </div>
+            </details>
+
+            <div class="cat-title">🔗 AI CHAT</div>
+            <div class="side-sns" style="margin-bottom: 10px;">
+                <a href="https://rofan.ai/user/eb1cdd76-ea72-4f6b-b5ef-9ad4caef588e" target="_blank">ROFAN AI</a>
+                <a href="https://caveduck.io/user/c2h5oh2521" target="_blank">CAVEDUCK</a>
+            </div>
+
+            <div class="cat-title">💌 SOCIAL</div>
+            <div class="side-sns">
+                <a href="https://x.com/c2h5oh2521" target="_blank">X/Twitter</a>
+                <a href="https://open.spotify.com/user/31clcuyqacrgjvmdpp7jp3bnsoca" target="_blank">Spotify</a>
+                <a href="https://125212.tistory.com" target="_blank">Tistory</a>
+            </div>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+
+    <div id="view-main" class="view-section active">
+
+        <div class="cute-window wide">
+            <div class="window-header">
+                <span>🖼️ MAIN_BANNER.jpg</span>
+                <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
+            </div>
+            <div class="window-body no-padding">
+                <div class="banner-img-container">
+                    <img src="Chimi_banner.jpg" alt="메인 배너 이미지">
+                </div>
+            </div>
+        </div>
+
+        <div class="desktop-columns">
+
+            <div class="col-left">
+                <div class="cute-window win-profile">
+                    <div class="window-header">
+                        <span>♥ MY_PROFILE.exe</span>
+                        <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
+                    </div>
+                    <div class="window-body">
+                        <div class="profile-layout">
+                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;">
+                                <img src="Chimi_Profile.jpg" alt="Profile">
+                            </div>
+                            <div class="profile-info">
+                                <div class="info-row"><span class="info-label">NAME</span>치미@ch25oh2521</div>
+                                <div class="info-row"><span class="info-label">DATE</span>2001.08.XX</div>
+                                <div class="info-row"><span class="info-label">STATE</span><span class="rainbow-glow-text">HP 깎이는 중<span class="blink"> 🚨</span></span></div>
+                            </div>
+                        </div>
+                        <div class="note-bubble">
+                            AI 채팅 제작 및 소비.<br>
+                            30대보고 아저씨라 하면 화냅니다.<br>
+                            엄마 나 집에 갈래
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cute-window win-calendar">
+                    <div class="window-header">
+                        <span>📅 CALENDAR.widget</span>
+                        <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
+                    </div>
+                    <div class="window-body">
+                        <div class="calendar-wrap">
+                            <div class="month-title" id="cal-month">JULY 2026</div>
+                            <div class="days-grid" id="cal-grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-right">
+                <div class="cute-window green-theme win-music">
+                    <div class="window-header">
+                        <span>🎧 AUDIO_PLAYER.exe</span>
+                        <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
+                    </div>
+                    <div class="window-body">
+                        <div class="music-player-wrap">
+                            <div class="track-title">♫ My_Favorite_Song.mp3</div>
+                            <audio id="custom-audio" src="마치 (MRCH)-05-항복-Oh, Life-192.mp3" loop></audio>
+                            <div class="player-controls">
+                                <button class="play-btn" id="play-btn" onclick="toggleAudio()">▶</button>
+                                <div class="progress-bar-container">
+                                    <input type="range" class="progress-bar" id="seek-bar" value="0" step="0.1">
+                                </div>
+                                <div class="time-display" id="time-display">0:00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cute-window green-theme win-shortcuts">
+                    <div class="window-header">
+                        <span>♣ SHORTCUTS.folder</span>
+                        <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
+                    </div>
+                    <div class="window-body">
+                        <div class="section-subtitle">🔗 AI CHAT PLATFORMS</div>
+                        <div class="shortcut-grid">
+                            <a href="https://rofan.ai/user/eb1cdd76-ea72-4f6b-b5ef-9ad4caef588e" target="_blank" class="shortcut-btn">ROFAN AI</a>
+                            <a href="https://caveduck.io/user/c2h5oh2521" target="_blank" class="shortcut-btn">CAVEDUCK</a>
+                        </div>
+                        <div class="section-subtitle">💌 SOCIAL LINKS</div>
+                        <div class="shortcut-grid" style="margin-bottom: 0;">
+                            <a href="https://x.com/c2h5oh2521" target="_blank" class="shortcut-btn">X/Twitter</a>
+                            <a href="https://open.spotify.com/user/31clcuyqacrgjvmdpp7jp3bnsoca" target="_blank" class="shortcut-btn">Spotify</a>
+                            <a href="https://125212.tistory.com" target="_blank" class="shortcut-btn">Tistory</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cute-window win-clock">
+                    <div class="window-header">
+                        <span>⏰ CLOCK.widget</span>
+                        <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
+                    </div>
+                    <div class="window-body">
+                        <div class="clock-wrap">
+                            <span class="clock-time" id="clock-display">00:00</span>
+                            <span class="clock-ampm" id="ampm-display">AM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <nav class="sb-cat">
-      <div class="cat-label">MENU</div>
-
-      <details class="folder" open>
-        <summary>HOME <span class="arrow">▶</span></summary>
-        <div class="cat-items">
-          <a class="cat-item active" data-view="view-main" href="#">DESKTOP <span class="n">home</span></a>
-        </div>
-      </details>
-
-      <details class="folder">
-        <summary>FILES <span class="arrow">▶</span></summary>
-        <div class="cat-items">
-          <a class="cat-item" data-view="view-file1" href="#">David × Sable <span class="n">01</span></a>
-          <a class="cat-item" data-view="view-file2" href="#">Dylan × Rowan <span class="n">02</span></a>
-        </div>
-      </details>
-
-      <div class="cat-label">AI CHAT</div>
-      <div class="sb-links" style="margin-bottom:10px;">
-        <a href="#" target="_blank">ROFAN AI</a>
-        <a href="https://caveduck.io/user/c2h5oh2521" target="_blank">CAVEDUCK</a>
-      </div>
-
-      <div class="cat-label">SOCIAL</div>
-      <div class="sb-links">
-        <a href="https://x.com/c2h5oh2521" target="_blank">X / Twitter</a>
-        <a href="https://open.spotify.com/user/31clcuyqacrgjvmdpp7jp3bnsoca" target="_blank">Spotify</a>
-        <a href="https://125212.tistory.com" target="_blank">Tistory</a>
-      </div>
-    </nav>
-  </aside>
-
-  <main class="desk">
-
-    <div id="view-main" class="view active">
-      <div class="desk-title">
-        c2h5oh2521
-        <small>archive of the fallen</small>
-      </div>
-
-      <div class="scatter">
-        <div class="win w-profile">
-          <div class="win-bar"><span class="win-dot"></span><span class="win-dot d2"></span><span class="win-dot d3"></span><span class="win-title">PROFILE.exe</span></div>
-          <div class="win-body">
-            <img class="photo" src="Chimi_Profile.jpg" alt="profile" onerror="this.style.display='none'"/>
-            <div class="cap">치미 @ch25oh2521</div>
-          </div>
-        </div>
-
-        <div class="win w-banner">
-          <div class="win-bar"><span class="win-dot"></span><span class="win-dot d2"></span><span class="win-dot d3"></span><span class="win-title">BANNER.jpg</span></div>
-          <div class="win-body">
-            <img class="photo" src="Chimi_banner.jpg" alt="banner" onerror="this.style.display='none'"/>
-          </div>
-        </div>
-
-        <div class="win w-note win-note">
-          <div class="win-bar"><span class="win-dot"></span><span class="win-dot d2"></span><span class="win-dot d3"></span><span class="win-title">MEMO.txt</span></div>
-          <div class="win-body">
-            <div class="note-text">
-              AI 채팅 제작 및 소비.<br>
-              30대보고 아저씨라 하면 <span class="em">화냅니다.</span><br>
-              엄마 나 집에 갈래
+    <div id="view-sync1" class="view-section">
+        <div class="desktop-area-sync">
+            <div class="cute-window">
+                <div class="window-header">
+                    <span>♥ FILE_01: DAVID x SABLE</span>
+                    <div class="header-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                </div>
+                <div class="window-body">
+                    <div class="d-day-display" data-date="2025-04-18">OP_DURATION: <span class="dday-result">LOADING...</span></div>
+                    <div class="pair-photos-container">
+                        <div class="pair-char-block">
+                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;">
+                                <img src="David.png" alt="David">
+                            </div>
+                            <div class="pair-name">DAVID</div>
+                        </div>
+                        <div class="pair-char-block">
+                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;">
+                                <img src="Sable.png" alt="Sable">
+                            </div>
+                            <div class="pair-name">SABLE</div>
+                        </div>
+                    </div>
+                    <div class="gallery-section">
+                        <img class="gallery-auto-img" src="beencomi_riley.png" alt="Riley">
+                        <div class="gallery-caption">COMMISSION: 콩밥</div>
+                    </div>
+                    <div class="gallery-section">
+                        <img class="gallery-auto-img" src="DOG_TAG.jpg" alt="Dog Tag">
+                        <div class="gallery-caption">MADE BY: 너도밤나무</div>
+                    </div>
+                    <div class="comms-header">💬 INTERCEPTED COMMS LOG</div>
+                    <div class="comms-log">
+                        <div class="comms-msg recv"><span class="msg-sender">D</span>Where's the remote.</div>
+                        <div class="comms-msg send"><span class="msg-sender">S</span>Where you left it?</div>
+                        <div class="comms-msg recv"><span class="msg-sender">D</span>If I knew where I left it, I wouldn't be asking, Savvy.</div>
+                        <div class="comms-msg send"><span class="msg-sender">S</span>Check under the couch cushions. The left one.</div>
+                        <div class="comms-msg recv"><span class="msg-sender">D</span>Not here.</div>
+                        <div class="comms-msg send"><span class="msg-sender">S</span>Okay, then check the pocket of the jeans I wore yesterday. They're on the floor in the laundry room.</div>
+                        <div class="comms-msg recv"><span class="msg-sender">D</span>Why the hell would it be there?</div>
+                        <div class="comms-msg send"><span class="msg-sender">S</span>...just check.</div>
+                        <div class="comms-msg recv"><span class="msg-sender">D</span>Found it. We need to talk.</div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-
-        <div class="win w-music">
-          <div class="win-bar"><span class="win-dot"></span><span class="win-dot d2"></span><span class="win-dot d3"></span><span class="win-title">AUDIO.exe</span></div>
-          <div class="win-body">
-            <div class="mp-title">♫ My_Favorite_Song.mp3</div>
-            <audio id="audio" src="마치 (MRCH)-05-항복-Oh, Life-192.mp3" loop></audio>
-            <div class="mp-controls">
-              <button class="mp-play" id="playBtn">▶</button>
-              <input type="range" class="mp-bar" id="seek" value="0" step="0.1" aria-label="seek"/>
-              <span class="mp-time" id="mtime">0:00</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="win w-cal">
-          <div class="win-bar"><span class="win-dot"></span><span class="win-dot d2"></span><span class="win-dot d3"></span><span class="win-title">CALENDAR.widget</span></div>
-          <div class="win-body">
-            <div class="cal-month" id="calMonth">—</div>
-            <div class="cal-grid" id="calGrid"></div>
-          </div>
-        </div>
-
-        <div class="win w-clock">
-          <div class="win-bar"><span class="win-dot"></span><span class="win-dot d2"></span><span class="win-dot d3"></span><span class="win-title">CLOCK.widget</span></div>
-          <div class="win-body">
-            <div class="clock-face">
-              <span class="clock-time" id="clock">00:00</span><span class="clock-ampm" id="ampm">AM</span>
-              <div class="clock-date" id="cdate"></div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <div id="view-file1" class="view">
-      <div class="pair-wrap">
-        <div class="win">
-          <div class="win-bar"><span class="win-dot"></span><span class="win-dot d2"></span><span class="win-dot d3"></span><span class="win-title">FILE_01 · DAVID × SABLE</span></div>
-          <div class="win-body">
-            <div class="dday" data-date="2025-04-18">OP_DURATION · <span class="dres">…</span></div>
-            <div class="pair-photos">
-              <div class="pair-one"><img src="David.png" alt="David" onerror="this.style.display='none'"/><div class="nm">DAVID</div></div>
-              <div class="pair-one"><img src="Sable.png" alt="Sable" onerror="this.style.display='none'"/><div class="nm">SABLE</div></div>
+    <div id="view-sync2" class="view-section">
+        <div class="desktop-area-sync">
+            <div class="cute-window green-theme">
+                <div class="window-header">
+                    <span>♣ FILE_02: DYLAN x ROWAN</span>
+                    <div class="header-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                </div>
+                <div class="window-body">
+                    <div class="d-day-display" data-date="2025-04-22" style="color:var(--cute-green-shadow); background-color:var(--cute-green-light);">OP_DURATION: <span class="dday-result">LOADING...</span></div>
+                    <div class="pair-photos-container">
+                        <div class="pair-char-block">
+                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;">
+                                <img src="Dylan.png" alt="Dylan">
+                            </div>
+                            <div class="pair-name">DYLAN</div>
+                        </div>
+                        <div class="pair-char-block">
+                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;">
+                                <img src="Rowan.png" alt="Rowan">
+                            </div>
+                            <div class="pair-name">ROWAN</div>
+                        </div>
+                    </div>
+                    <div class="gallery-section">
+                        <img class="gallery-auto-img" src="beencomi_choco.png" alt="Choco">
+                        <div class="gallery-caption">COMMISSION: 콩밥</div>
+                    </div>
+                    <div class="comms-header">💬 INTERCEPTED COMMS LOG</div>
+                    <div class="comms-log">
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>hey</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>dylan</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>dylannnn</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>Sergeant Fredriiiick</div>
+                        <div class="comms-msg recv"><span class="msg-sender">Dylan</span>What.</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>do u know where i put the backup battery for the Kestrel</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>i swear i had it like an hour ago</div>
+                        <div class="comms-msg recv"><span class="msg-sender">Dylan</span>Left cargo pocket. You moved it there after you complained the chest rig was digging into your ribs.</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>...</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>oh</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>wait how do you even know that</div>
+                        <div class="comms-msg recv"><span class="msg-sender">Dylan</span>I watch.</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>😶</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>that's either really helpful or really creepy and i genuinely cannot decide</div>
+                        <div class="comms-msg recv"><span class="msg-sender">Dylan</span>Found it?</div>
+                        <div class="comms-msg send"><span class="msg-sender">Rowan</span>yeah it was in my left cargo pocket<br>...merci 🙏</div>
+                        <div class="comms-msg recv"><span class="msg-sender">Dylan</span>Don't lose it again.</div>
+                    </div>
+                </div>
             </div>
-            <img class="gallery-img" src="beencomi_riley.png" alt="riley" onerror="this.style.display='none'"/>
-            <div class="gallery-cap">COMMISSION · 콩밥</div>
-            <img class="gallery-img" src="DOG_TAG.jpg" alt="dogtag" onerror="this.style.display='none'"/>
-            <div class="gallery-cap">MADE BY · 너도밤나무</div>
-
-            <div class="comms">
-              <div class="comms-h">— INTERCEPTED COMMS —</div>
-              <div class="comms-log">
-                <div class="msg recv"><span class="who">D</span>Where's the remote.</div>
-                <div class="msg send"><span class="who">S</span>Where you left it?</div>
-                <div class="msg recv"><span class="who">D</span>If I knew where I left it, I wouldn't be asking, Savvy.</div>
-                <div class="msg send"><span class="who">S</span>Check under the couch cushions. The left one.</div>
-                <div class="msg recv"><span class="who">D</span>Not here.</div>
-                <div class="msg send"><span class="who">S</span>Then check the pocket of the jeans I wore yesterday. Laundry room floor.</div>
-                <div class="msg recv"><span class="who">D</span>Why the hell would it be there?</div>
-                <div class="msg send"><span class="who">S</span>...just check.</div>
-                <div class="msg recv"><span class="who">D</span>Found it. We need to talk.</div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
 
-    <div id="view-file2" class="view">
-      <div class="pair-wrap">
-        <div class="win">
-          <div class="win-bar"><span class="win-dot"></span><span class="win-dot d2"></span><span class="win-dot d3"></span><span class="win-title">FILE_02 · DYLAN × ROWAN</span></div>
-          <div class="win-body">
-            <div class="dday" data-date="2025-04-22">OP_DURATION · <span class="dres">…</span></div>
-            <div class="pair-photos">
-              <div class="pair-one"><img src="Dylan.png" alt="Dylan" onerror="this.style.display='none'"/><div class="nm">DYLAN</div></div>
-              <div class="pair-one"><img src="Rowan.png" alt="Rowan" onerror="this.style.display='none'"/><div class="nm">ROWAN</div></div>
-            </div>
-            <img class="gallery-img" src="beencomi_choco.png" alt="choco" onerror="this.style.display='none'"/>
-            <div class="gallery-cap">COMMISSION · 콩밥</div>
-
-            <div class="comms">
-              <div class="comms-h">— INTERCEPTED COMMS —</div>
-              <div class="comms-log">
-                <div class="msg send"><span class="who">Rowan</span>hey</div>
-                <div class="msg send"><span class="who">Rowan</span>dylannnn</div>
-                <div class="msg send"><span class="who">Rowan</span>Sergeant Fredriiiick</div>
-                <div class="msg recv"><span class="who">Dylan</span>What.</div>
-                <div class="msg send"><span class="who">Rowan</span>do u know where i put the backup battery for the Kestrel</div>
-                <div class="msg recv"><span class="who">Dylan</span>Left cargo pocket. You moved it there after you complained the chest rig was digging into your ribs.</div>
-                <div class="msg send"><span class="who">Rowan</span>wait how do you even know that</div>
-                <div class="msg recv"><span class="who">Dylan</span>I watch.</div>
-                <div class="msg send"><span class="who">Rowan</span>that's either really helpful or really creepy and i cannot decide</div>
-                <div class="msg recv"><span class="who">Dylan</span>Found it?</div>
-                <div class="msg send"><span class="who">Rowan</span>yeah. ...merci 🙏</div>
-                <div class="msg recv"><span class="who">Dylan</span>Don't lose it again.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
-  </main>
+    <script>
+        function toggleSidebar() { document.body.classList.toggle('sidebar-open'); }
+        function closeSidebar() { document.body.classList.remove('sidebar-open'); }
 
-<script>
-  const body = document.body;
-  const eyeBtn = document.getElementById('eyeBtn');
-  const overlay = document.getElementById('overlay');
-  function toggleNav(){ body.classList.toggle('nav-open'); }
-  function closeNav(){ body.classList.remove('nav-open'); }
-  eyeBtn.addEventListener('click', toggleNav);
-  eyeBtn.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleNav(); }});
-  overlay.addEventListener('click', closeNav);
-  document.addEventListener('keydown', e => { if(e.key==='Escape') closeNav(); });
+        function switchView(viewId, linkElement) {
+            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.cat-item').forEach(item => item.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            if (linkElement) linkElement.classList.add('active');
+            closeSidebar();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-  document.querySelectorAll('.cat-item').forEach(item => {
-    item.addEventListener('click', e => {
-      e.preventDefault();
-      const id = item.getAttribute('data-view');
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      item.classList.add('active');
-      closeNav();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
 
-  (function(){
-    const today = new Date();
-    document.querySelectorAll('.dday').forEach(el => {
-      const d = new Date(el.getAttribute('data-date'));
-      const diff = Math.floor((today - d) / 86400000);
-      el.querySelector('.dres').textContent = '+' + diff + ' DAYS';
-    });
-  })();
+        function calculateDdays() {
+            const displays = document.querySelectorAll('.d-day-display');
+            const today = new Date();
+            displays.forEach(display => {
+                const dateStr = display.getAttribute('data-date');
+                if(dateStr) {
+                    const targetDate = new Date(dateStr);
+                    const diffDays = Math.floor((today.getTime() - targetDate.getTime()) / (1000 * 60 * 60 * 24));
+                    display.querySelector('.dday-result').innerText = "+" + diffDays + " DAYS";
+                }
+            });
+        }
 
-  /* 달력 */
-  (function(){
-    const now = new Date();
-    const y = now.getFullYear(), mo = now.getMonth(), td = now.getDate();
-    const names = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
-    document.getElementById('calMonth').textContent = names[mo] + ' ' + y;
-    const first = new Date(y, mo, 1).getDay();
-    const dim = new Date(y, mo+1, 0).getDate();
-    const grid = document.getElementById('calGrid');
-    ['S','M','T','W','T','F','S'].forEach((d,i) => {
-      const el = document.createElement('div');
-      el.className = 'dn' + (i===0 ? ' sun' : '');
-      el.textContent = d; grid.appendChild(el);
-    });
-    for(let i=0;i<first;i++){ const e=document.createElement('div'); grid.appendChild(e); }
-    for(let d=1; d<=dim; d++){
-      const e=document.createElement('div');
-      const dow = (first + d - 1) % 7;
-      e.className = 'dc' + (d===td ? ' today' : '') + (dow===0 ? ' sun' : '');
-      e.textContent = d; grid.appendChild(e);
-    }
-  })();
+        function renderCalendar() {
+            const now = new Date();
+            const year = now.getFullYear(), month = now.getMonth(), todayDate = now.getDate();
+            const monthNames = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+            document.getElementById('cal-month').innerText = monthNames[month] + " " + year;
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const grid = document.getElementById('cal-grid');
+            grid.innerHTML = '';
+            ['S','M','T','W','T','F','S'].forEach(day => { grid.innerHTML += `<div class="day-name">${day}</div>`; });
+            for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div></div>`; }
+            for (let i = 1; i <= daysInMonth; i++) {
+                const isToday = i === todayDate ? 'today' : '';
+                grid.innerHTML += `<div class="day-num ${isToday}">${i}</div>`;
+            }
+        }
 
-  /* 시계 */
-  function tick(){
-    const n = new Date();
-    let h = n.getHours(); const m = String(n.getMinutes()).padStart(2,'0');
-    const ap = h >= 12 ? 'PM' : 'AM';
-    h = h % 12 || 12;
-    document.getElementById('clock').textContent = h + ':' + m;
-    document.getElementById('ampm').textContent = ap;
-    const days = ['일','월','화','수','목','금','토'];
-    document.getElementById('cdate').textContent =
-      (n.getMonth()+1) + '月 ' + n.getDate() + '日 · ' + days[n.getDay()] + '曜日';
-    setTimeout(tick, 1000);
-  }
-  tick();
+        function updateClock() {
+            const now = new Date();
+            let h = now.getHours(); let m = now.getMinutes();
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12; h = h ? h : 12;
+            m = m < 10 ? '0' + m : m;
+            document.getElementById('clock-display').innerText = `${h}:${m}`;
+            document.getElementById('ampm-display').innerText = ampm;
+            setTimeout(updateClock, 1000);
+        }
 
-  /* 음악 플레이어 */
-  (function(){
-    const audio = document.getElementById('audio');
-    const btn = document.getElementById('playBtn');
-    const seek = document.getElementById('seek');
-    const tlabel = document.getElementById('mtime');
-    function fmt(s){ const m=Math.floor(s/60), x=Math.floor(s%60); return m+':'+(x<10?'0'+x:x); }
-    btn.addEventListener('click', () => {
-      if(audio.paused){ audio.play(); btn.textContent='⏸'; }
-      else { audio.pause(); btn.textContent='▶'; }
-    });
-    audio.addEventListener('timeupdate', () => {
-      if(audio.duration){ seek.value = (audio.currentTime/audio.duration)*100; tlabel.textContent = fmt(audio.currentTime); }
-    });
-    seek.addEventListener('input', () => { if(audio.duration){ audio.currentTime = (seek.value/100)*audio.duration; } });
-  })();
+        const audio = document.getElementById('custom-audio');
+        const playBtn = document.getElementById('play-btn');
+        const seekBar = document.getElementById('seek-bar');
+        const timeDisplay = document.getElementById('time-display');
 
-  /* 빨간 먼지 (밀도 상향) */
-  (function(){
-    const canvas = document.getElementById('dust');
-    const ctx = canvas.getContext('2d');
-    let W, H, particles;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function toggleAudio() {
+            if (audio.paused) { audio.play(); playBtn.innerText = '⏸'; }
+            else { audio.pause(); playBtn.innerText = '▶'; }
+        }
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60); const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' + sec : sec}`;
+        }
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) { seekBar.value = (audio.currentTime / audio.duration) * 100; timeDisplay.innerText = formatTime(audio.currentTime); }
+        });
+        seekBar.addEventListener('input', () => { if (audio.duration) { audio.currentTime = (seekBar.value / 100) * audio.duration; } });
 
-    function resize(){
-      W = canvas.width = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-      const count = Math.min(200, Math.floor(W * H / 9000));
-      particles = [];
-      for(let i=0;i<count;i++) particles.push(spawn(true));
-    }
-    function spawn(init){
-      return {
-        x: Math.random() * W,
-        y: init ? Math.random() * H : H + 10,
-        r: Math.random() * 1.8 + 0.5,
-        sp: Math.random() * 0.5 + 0.15,
-        drift: (Math.random() - 0.5) * 0.3,
-        a: Math.random() * 0.5 + 0.15
-      };
-    }
-    function frame(){
-      ctx.clearRect(0,0,W,H);
-      for(const p of particles){
-        p.y -= p.sp; p.x += p.drift;
-        if(p.y < -10){ Object.assign(p, spawn(false)); }
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-        ctx.fillStyle = 'rgba(139,0,0,' + p.a + ')';
-        ctx.fill();
-      }
-      requestAnimationFrame(frame);
-    }
-    window.addEventListener('resize', resize);
-    resize();
-    if(!reduce) frame();
-    else { for(const p of particles){ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(139,0,0,'+p.a+')'; ctx.fill(); } }
-  })();
-</script>
+        window.onload = () => { calculateDdays(); renderCalendar(); updateClock(); };
+    </script>
 </body>
 </html>
