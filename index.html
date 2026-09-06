@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>c2h5oh2521_v2521</title>
+    <title>c2h5oh2521_chimidesktop_v2521</title>
     <style>
         @font-face {
             font-family: 'NeoDunggeunmo';
@@ -249,6 +249,104 @@
         .green-theme ::-webkit-scrollbar-thumb { background: var(--cute-green-light); }
 
         .main-content { padding-top: 20px; }
+
+        /* ===== CD 플레이어 ===== */
+        .cd-stage {
+            display: flex; flex-direction: column; align-items: center; gap: 16px;
+            margin-bottom: 16px;
+        }
+        .cd-disc {
+            position: relative;
+            width: 150px; height: 150px;
+            border-radius: 50%;
+            /* 홀로그램 무지갯빛 + 방사형 광택 */
+            background:
+                repeating-conic-gradient(
+                    from 0deg,
+                    rgba(255,255,255,0.35) 0deg 6deg,
+                    rgba(255,255,255,0) 6deg 12deg
+                ),
+                conic-gradient(
+                    from 0deg,
+                    #ffd1dc, #d4f0e5, #cfe0ff, #f0d0ff, #fff2c4, #d4f0e5, #ffd1dc
+                );
+            box-shadow: 0 6px 18px rgba(92,67,65,0.25), inset 0 0 18px rgba(255,255,255,0.5);
+            display: flex; align-items: center; justify-content: center;
+            animation: cd-spin 3.5s linear infinite;
+            animation-play-state: paused;
+        }
+        .cd-disc.spinning { animation-play-state: running; }
+        /* 디스크 표면 반사광 (움직이는 하이라이트) */
+        .cd-disc::before {
+            content: ''; position: absolute; inset: 0; border-radius: 50%;
+            background: linear-gradient(120deg, rgba(255,255,255,0) 40%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0) 60%);
+            mix-blend-mode: screen;
+            animation: cd-shine 3.5s linear infinite;
+        }
+        /* 가운데 구멍(라벨) */
+        .cd-disc::after {
+            content: ''; position: relative; z-index: 2;
+            width: 46px; height: 46px; border-radius: 50%;
+            background: var(--window-bg);
+            border: 3px solid var(--cute-red-light);
+            box-shadow: inset 0 0 0 6px rgba(255,255,255,0.6);
+        }
+        .cd-hole {
+            position: absolute; z-index: 3;
+            width: 14px; height: 14px; border-radius: 50%;
+            background: var(--bg-color);
+            border: 2px solid var(--cute-red);
+        }
+        @keyframes cd-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+        @keyframes cd-shine { from { transform: rotate(0); } to { transform: rotate(-360deg); } }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cd-disc, .cd-disc::before { animation: none !important; }
+        }
+
+        /* ===== 헤더 맨 앞 기호/이모지만 반짝 ===== */
+        /* 은은한 메탈 하이라이트(정적)만 유지 */
+        .window-header {
+            background-image: linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0) 45%);
+            background-blend-mode: overlay;
+        }
+        .hdr-glim {
+            display: inline-block;
+            animation: hdr-glim 3.2s ease-in-out infinite;
+        }
+        @keyframes hdr-glim {
+            0%, 100% { opacity: 0.55; transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
+            50% { opacity: 1; transform: scale(1.18); filter: drop-shadow(0 0 4px rgba(255,255,255,0.9)); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hdr-glim { animation: none; opacity: 1; }
+        }
+
+
+        /* ===== 이스터에그 토스트 ===== */
+        .egg-toast {
+            position: fixed;
+            left: 50%; bottom: 40px;
+            transform: translateX(-50%) translateY(20px);
+            background-color: var(--window-bg);
+            color: var(--text-main);
+            border: 3px solid var(--cute-red);
+            border-radius: 16px;
+            box-shadow: 5px 5px 0 var(--cute-red-light);
+            padding: 14px 22px;
+            font-family: 'NeoDunggeunmo', monospace;
+            font-size: 0.9rem;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            max-width: 80%;
+            text-align: center;
+        }
+        .egg-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .egg-toast::before {
+            content: '✦'; color: var(--cute-red); margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -258,6 +356,7 @@
     </div>
 
     <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    <div class="egg-toast" id="egg-toast"></div>
 
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -266,7 +365,7 @@
         </div>
 
         <div class="side-profile">
-            <img class="side-profile-img" src="Chimi_Profile.jpg" alt="Profile">
+            <img class="side-profile-img" src="Chimi_why.jpg" alt="Profile">
             <div class="side-profile-name">치미</div>
             <div class="side-profile-handle">@ch25oh2521</div>
             <div class="side-profile-state">🚨 HP 깎이는 중</div>
@@ -292,7 +391,7 @@
 
             <div class="cat-title">🔗 AI CHAT</div>
             <div class="side-sns" style="margin-bottom: 10px;">
-                <a href="https://rofan.ai/user/eb1cdd76-ea72-4f6b-b5ef-9ad4caef588e" target="_blank">ROFAN AI</a>
+                <a href="#" target="_blank">ROFAN AI</a>
                 <a href="https://caveduck.io/user/c2h5oh2521" target="_blank">CAVEDUCK</a>
             </div>
 
@@ -311,12 +410,12 @@
 
         <div class="cute-window wide">
             <div class="window-header">
-                <span>🖼️ MAIN_BANNER.jpg</span>
+                <span><span class="hdr-glim">🖼️</span> MAIN_BANNER.jpg</span>
                 <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
             </div>
             <div class="window-body no-padding">
                 <div class="banner-img-container">
-                    <img src="Chimi_banner.jpg" alt="메인 배너 이미지">
+                    <img src="Chimi_main.jpg" alt="메인 배너 이미지">
                 </div>
             </div>
         </div>
@@ -326,13 +425,13 @@
             <div class="col-left">
                 <div class="cute-window win-profile">
                     <div class="window-header">
-                        <span>♥ MY_PROFILE.exe</span>
+                        <span><span class="hdr-glim">♥</span> MY_PROFILE.exe</span>
                         <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
                     </div>
                     <div class="window-body">
                         <div class="profile-layout">
-                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%;">
-                                <img src="Chimi_Profile.jpg" alt="Profile">
+                            <div class="img-placeholder" style="width: 100px; height: 100px; border-radius: 50%; cursor: pointer;" id="egg-trigger" title="?">
+                                <img src="Chimi_profile (2).jpg" alt="Profile">
                             </div>
                             <div class="profile-info">
                                 <div class="info-row"><span class="info-label">NAME</span>치미@ch25oh2521</div>
@@ -350,7 +449,7 @@
 
                 <div class="cute-window win-calendar">
                     <div class="window-header">
-                        <span>📅 CALENDAR.widget</span>
+                        <span><span class="hdr-glim">📅</span> CALENDAR.widget</span>
                         <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
                     </div>
                     <div class="window-body">
@@ -365,13 +464,16 @@
             <div class="col-right">
                 <div class="cute-window green-theme win-music">
                     <div class="window-header">
-                        <span>🎧 AUDIO_PLAYER.exe</span>
+                        <span><span class="hdr-glim">🎧</span> AUDIO_PLAYER.exe</span>
                         <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
                     </div>
                     <div class="window-body">
                         <div class="music-player-wrap">
+                            <div class="cd-stage">
+                                <div class="cd-disc" id="cd-disc"><span class="cd-hole"></span></div>
+                            </div>
                             <div class="track-title">♫ My_Favorite_Song.mp3</div>
-                            <audio id="custom-audio" src="마치 (MRCH)-05-항복-Oh, Life-192.mp3" loop></audio>
+                            <audio id="custom-audio" src="이츠-01-홀씨-홀씨-192.mp3" loop></audio>
                             <div class="player-controls">
                                 <button class="play-btn" id="play-btn" onclick="toggleAudio()">▶</button>
                                 <div class="progress-bar-container">
@@ -383,29 +485,9 @@
                     </div>
                 </div>
 
-                <div class="cute-window green-theme win-shortcuts">
-                    <div class="window-header">
-                        <span>♣ SHORTCUTS.folder</span>
-                        <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
-                    </div>
-                    <div class="window-body">
-                        <div class="section-subtitle">🔗 AI CHAT PLATFORMS</div>
-                        <div class="shortcut-grid">
-                            <a href="https://rofan.ai/user/eb1cdd76-ea72-4f6b-b5ef-9ad4caef588e" target="_blank" class="shortcut-btn">ROFAN AI</a>
-                            <a href="https://caveduck.io/user/c2h5oh2521" target="_blank" class="shortcut-btn">CAVEDUCK</a>
-                        </div>
-                        <div class="section-subtitle">💌 SOCIAL LINKS</div>
-                        <div class="shortcut-grid" style="margin-bottom: 0;">
-                            <a href="https://x.com/c2h5oh2521" target="_blank" class="shortcut-btn">X/Twitter</a>
-                            <a href="https://open.spotify.com/user/31clcuyqacrgjvmdpp7jp3bnsoca" target="_blank" class="shortcut-btn">Spotify</a>
-                            <a href="https://125212.tistory.com" target="_blank" class="shortcut-btn">Tistory</a>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="cute-window win-clock">
                     <div class="window-header">
-                        <span>⏰ CLOCK.widget</span>
+                        <span><span class="hdr-glim">⏰</span> CLOCK.widget</span>
                         <div class="header-dots"><div class="dot"></div><div class="dot"></div></div>
                     </div>
                     <div class="window-body">
@@ -424,7 +506,7 @@
         <div class="desktop-area-sync">
             <div class="cute-window">
                 <div class="window-header">
-                    <span>♥ FILE_01: DAVID x SABLE</span>
+                    <span><span class="hdr-glim">♥</span> FILE_01: DAVID x SABLE</span>
                     <div class="header-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
                 </div>
                 <div class="window-body">
@@ -472,7 +554,7 @@
         <div class="desktop-area-sync">
             <div class="cute-window green-theme">
                 <div class="window-header">
-                    <span>♣ FILE_02: DYLAN x ROWAN</span>
+                    <span><span class="hdr-glim">♣</span> FILE_02: DYLAN x ROWAN</span>
                     <div class="header-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
                 </div>
                 <div class="window-body">
@@ -583,9 +665,10 @@
         const seekBar = document.getElementById('seek-bar');
         const timeDisplay = document.getElementById('time-display');
 
+        const cdDisc = document.getElementById('cd-disc');
         function toggleAudio() {
-            if (audio.paused) { audio.play(); playBtn.innerText = '⏸'; }
-            else { audio.pause(); playBtn.innerText = '▶'; }
+            if (audio.paused) { audio.play(); playBtn.innerText = '⏸'; cdDisc.classList.add('spinning'); }
+            else { audio.pause(); playBtn.innerText = '▶'; cdDisc.classList.remove('spinning'); }
         }
         function formatTime(seconds) {
             const min = Math.floor(seconds / 60); const sec = Math.floor(seconds % 60);
@@ -595,6 +678,38 @@
             if (audio.duration) { seekBar.value = (audio.currentTime / audio.duration) * 100; timeDisplay.innerText = formatTime(audio.currentTime); }
         });
         seekBar.addEventListener('input', () => { if (audio.duration) { audio.currentTime = (seekBar.value / 100) * audio.duration; } });
+
+        /* 이스터에그: 프로필 5연타 */
+        (function(){
+            const trigger = document.getElementById('egg-trigger');
+            const toast = document.getElementById('egg-toast');
+            if(!trigger || !toast) return;
+            const messages = [
+                '그거 누른다고 확대되진 않아요',
+                'TMI: 치미는 해산물을 싫어한다.',
+                '사실 애니나 게임에서는 여캐를 더 좋아합니다.',
+                '아무것도 하기 싫다',
+                '삐에엥',
+                '우우 나를 집에 보내달라 우우
+                '커피 수혈이 필요해 ☕'
+            ];
+            let count = 0, timer = null, hideTimer = null, lastIdx = -1;
+            trigger.addEventListener('click', () => {
+                count++;
+                clearTimeout(timer);
+                timer = setTimeout(() => { count = 0; }, 1200); // 1.2초 내 연타
+                if(count >= 5){
+                    count = 0;
+                    let idx;
+                    do { idx = Math.floor(Math.random()*messages.length); } while(idx === lastIdx && messages.length > 1);
+                    lastIdx = idx;
+                    toast.textContent = messages[idx];
+                    toast.classList.add('show');
+                    clearTimeout(hideTimer);
+                    hideTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+                }
+            });
+        })();
 
         window.onload = () => { calculateDdays(); renderCalendar(); updateClock(); };
     </script>
